@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Latihan Soal TKA Teks Prosedur</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #resultModal, #resultModal * {
+        visibility: visible;
+      }
+      #resultModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+
+  <!-- Top Navigation Header Sticky -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-xs">
+    <div class="max-w-4xl mx-auto px-3.5 py-2.5 sm:px-6 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-base shadow-sm">
+          TKA
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-black text-slate-900 leading-tight">Latihan Soal TKA Teks Prosedur</h1>
+          <p class="text-[11px] text-slate-500 font-bold">Asesmen Sumatif Bab II &bull; Total 40 Soal</p>
+        </div>
+      </div>
+      <!-- Right Badge -->
+      <div id="studentInfoBadge" class="hidden flex items-center gap-2">
+        <div class="text-right">
+          <span id="badgeName" class="block text-xs sm:text-sm font-bold text-slate-800 truncate max-w-[130px] sm:max-w-[200px]">Nama Siswa</span>
+          <span id="badgeClass" class="inline-block px-2 py-0.5 text-[10px] sm:text-xs font-black rounded-full bg-blue-100 text-blue-800">Kelas</span>
+        </div>
+      </div>
+    </div>
+    <!-- Progress bar on top -->
+    <div id="examProgressBarContainer" class="w-full bg-slate-100 h-1.5 hidden">
+      <div id="examProgressBar" class="bg-blue-600 h-1.5 transition-all duration-300" style="width: 0%"></div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-3.5 py-4 sm:px-6">
+
+    <!-- Screen 1: Identitas & Petunjuk Siswa -->
+    <section id="welcomeScreen" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-sky-600 p-5 sm:p-8 text-white">
+        <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur rounded-full text-[11px] font-black uppercase tracking-wider mb-2">Asesmen Kompetensi Akademik &bull; Kelas 9</span>
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-black">Latihan Soal TKA Teks Prosedur</h2>
+        <p class="mt-2 text-blue-100 text-xs sm:text-sm leading-relaxed">
+          Ujian mencakup TP 1 (Menyimak), TP 2 (Membaca & Memirsa), TP 3 (Berbicara & Mempresentasikan), dan TP 4 (Menulis). Hasil tes otomatis terkirim ke buku nilai guru.
+        </p>
+      </div>
+
+      <div class="p-5 sm:p-8">
+        <form id="startForm" onsubmit="event.preventDefault(); startExam();">
+          <div class="space-y-4 mb-6">
+            <div>
+              <label for="studentName" class="block text-xs sm:text-sm font-black text-slate-700 mb-1.5">Nama Lengkap Siswa <span class="text-rose-500">*</span></label>
+              <input type="text" id="studentName" required placeholder="Ketik nama lengkap Anda..."
+                     class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-800 text-sm sm:text-base font-semibold transition">
+            </div>
+            <div>
+              <label for="studentClass" class="block text-xs sm:text-sm font-black text-slate-700 mb-1.5">Pilih Rombel / Kelas <span class="text-rose-500">*</span></label>
+              <select id="studentClass" required
+                      class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-800 bg-white text-sm sm:text-base font-semibold transition">
+                <option value="">-- Pilih Kelas --</option>
+                <option value="9H">Kelas 9H</option>
+                <option value="9I">Kelas 9I</option>
+                <option value="9J">Kelas 9J</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Petunjuk Pengerjaan -->
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6">
+            <h3 class="font-black text-amber-900 text-xs sm:text-sm flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-circle-info text-amber-600"></i> Struktur Bobot Nilai (Total 100 Poin):
+            </h3>
+            <ul class="text-xs text-amber-800 space-y-1.5 list-disc pl-4 font-medium leading-relaxed">
+              <li><strong>Pilihan Ganda Tunggal</strong>: 20 soal &times; 2 poin = <strong>40 Poin</strong>[cite: 3].</li>
+              <li><strong>Pilihan Ganda Kompleks</strong>: 12 soal &times; 3 poin = <strong>36 Poin</strong> (boleh centang lebih dari 1)[cite: 3].</li>
+              <li><strong>Pernyataan Benar / Salah</strong>: 8 soal (masing-masing 4 butir) = <strong>24 Poin</strong>[cite: 3].</li>
+            </ul>
+          </div>
+
+          <button type="submit" class="w-full py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-black text-sm sm:text-base shadow-lg shadow-blue-500/20 transition flex items-center justify-center gap-2">
+            <span>Mulai Mengerjakan Latihan TKA</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Screen 2: Lembar Ujian Utama -->
+    <section id="examScreen" class="hidden space-y-6 pb-20">
+      
+      <!-- Sticky Quick Status Bar Mobile -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm flex items-center justify-between gap-3 sticky top-[54px] z-30">
+        <div>
+          <div class="text-[11px] text-slate-400 font-bold uppercase">Progres Ujian</div>
+          <div class="text-sm font-black text-slate-800"><span id="answeredCount" class="text-blue-600">0</span> / 40 Soal Terjawab</div>
+        </div>
+        <button type="button" onclick="showQuickNavigation()" class="px-3.5 py-2 text-xs font-black bg-slate-100 hover:bg-slate-200 active:scale-95 rounded-xl text-slate-700 transition flex items-center gap-1.5 border border-slate-200">
+          <i class="fa-solid fa-list-ol text-blue-600"></i>
+          <span>Daftar Nomor</span>
+        </button>
+      </div>
+
+      <!-- Quick Navigator Drawer -->
+      <div id="questionGridDrawer" class="hidden bg-white border border-slate-200 rounded-2xl p-4 shadow-xl">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+          <h4 class="text-xs font-black uppercase tracking-wider text-slate-500">Pilih Nomor Soal</h4>
+          <button onclick="showQuickNavigation()" class="text-xs text-slate-400 font-bold"><i class="fa-solid fa-xmark"></i> Tutup</button>
+        </div>
+        <!-- Grid 5 Kolom agar Nyaman Ditekan Jempol HP -->
+        <div id="gridNumberButtons" class="grid grid-cols-5 sm:grid-cols-10 gap-2"></div>
+      </div>
+
+      <!-- Container Soal per TP -->
+      <div id="questionsContainer" class="space-y-8"></div>
+
+      <!-- Submit Section -->
+      <div class="bg-white border border-slate-200 rounded-3xl p-5 sm:p-7 text-center shadow-sm">
+        <h3 class="text-base sm:text-lg font-black text-slate-800 mb-1.5">Selesai Mengerjakan?</h3>
+        <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mb-5 leading-relaxed">
+          Periksa kembali jawaban Anda. Setelah tombol diklik, nilai akan dihitung dan dikirim langsung ke Google Sheet guru.
+        </p>
+        <button type="button" onclick="confirmSubmission()" class="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-black text-sm rounded-2xl shadow-lg shadow-emerald-500/20 transition inline-flex items-center justify-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Kirim & Selesaikan Latihan</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Modal Konfirmasi Submit -->
+    <div id="confirmModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-slate-200">
+        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 class="text-base font-black text-slate-900 text-center mb-1.5">Konfirmasi Pengumpulan</h3>
+        <p id="confirmMessage" class="text-xs sm:text-sm text-slate-600 text-center mb-5 leading-relaxed">
+          Apakah Anda yakin ingin mengumpulkan latihan ini sekarang?
+        </p>
+        <div class="flex gap-2">
+          <button type="button" onclick="closeConfirmModal()" class="flex-1 py-3 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">
+            Periksa Lagi
+          </button>
+          <button type="button" onclick="calculateAndDisplayResults()" class="flex-1 py-3 px-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-xs transition shadow-md">
+            Ya, Kumpulkan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Hasil & Review Jawaban -->
+    <div id="resultModal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm overflow-y-auto p-3.5 sm:p-4 hidden">
+      <div class="max-w-3xl w-full mx-auto my-4 bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+        
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-5 sm:p-6 text-white flex items-center justify-between gap-3">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">Laporan Nilai TKA</span>
+            <h2 class="text-lg sm:text-2xl font-black mt-1">Hasil Evaluasi Sumatif</h2>
+            <p class="text-xs text-blue-100 mt-0.5" id="resStudentInfo">-</p>
+          </div>
+          <div class="bg-white text-slate-900 px-4 py-2 rounded-2xl text-center flex-shrink-0 shadow-lg">
+            <div class="text-[9px] uppercase font-black text-slate-400">Skor Akhir</div>
+            <div id="finalScoreDisplay" class="text-3xl font-black text-blue-600 leading-none my-0.5">0</div>
+            <div class="text-[10px] font-bold text-slate-500">dari 100 Poin</div>
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-4">
+          <!-- Status Sinkronisasi Google Sheets -->
+          <div id="sheetStatusBox" class="p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 bg-slate-50 border-slate-200 text-slate-600">
+            <i id="sheetStatusIcon" class="fa-solid fa-spinner fa-spin text-blue-600"></i>
+            <span id="sheetStatusText">Sedang mengirimkan nilai ke Google Sheets guru...</span>
+          </div>
+
+          <!-- Breakdown TP Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+            <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+              <span class="text-[10px] font-black text-blue-700 block">TP 1: Menyimak</span>
+              <strong id="tp1Score" class="text-base font-black text-blue-900 block mt-0.5">0/25</strong>
+            </div>
+            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <span class="text-[10px] font-black text-emerald-700 block">TP 2: Membaca</span>
+              <strong id="tp2Score" class="text-base font-black text-emerald-900 block mt-0.5">0/25</strong>
+            </div>
+            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <span class="text-[10px] font-black text-amber-700 block">TP 3: Berbicara</span>
+              <strong id="tp3Score" class="text-base font-black text-amber-900 block mt-0.5">0/25</strong>
+            </div>
+            <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl">
+              <span class="text-[10px] font-black text-purple-700 block">TP 4: Menulis</span>
+              <strong id="tp4Score" class="text-base font-black text-purple-900 block mt-0.5">0/25</strong>
+            </div>
+          </div>
+
+          <!-- Review List -->
+          <div>
+            <h4 class="text-xs font-black uppercase text-slate-600 mb-2">Rincian Jawaban Soal:</h4>
+            <div id="reviewDetailsContainer" class="space-y-2 max-h-[45vh] overflow-y-auto custom-scroll pr-1 text-xs"></div>
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2 no-print">
+          <button type="button" onclick="window.print()" class="px-4 py-2.5 bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-print"></i> Cetak PDF
+          </button>
+          <button type="button" onclick="closeResultModal()" class="px-4 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl text-xs font-bold transition">
+            Tutup
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // URL GOOGLE APPS SCRIPT WEB APP
+    // Ganti teks di dalam tanda kutip dengan URL Web App Anda yang berakhiran /exec
+    // =========================================================================
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4HRq8s5v32hW06r_ZTHLauWKQ6Dt9mv_T0qzYzDhDTRhAP8khoF1YvOlECUQokZvB/exec";
+
+    const examData = {
+      tp1: {
+        title: "TP 1. Menyimak",
+        subtitle: "Cermati Infografik Berikut untuk Menjawab Soal Nomor 1 – 10",
+        type: "infographic_pot",
+        questions: [
+          {
+            id: 1,
+            type: "single",
+            question: "Berdasarkan infografik, alat yang digunakan untuk membuat lubang pada bagian bawah botol adalah ....",
+            options: ["guntung", "spidol", "paku", "pisau"],
+            key: "paku"
+          },
+          {
+            id: 2,
+            type: "single",
+            question: "Berapa ukuran botol plastik yang digunakan dalam prosedur tersebut?",
+            options: ["500 ml", "750 ml", "1 liter", "1,5 liter"],
+            key: "1,5 liter"
+          },
+          {
+            id: 3,
+            type: "multiple",
+            question: "Centang semua jawaban yang sesuai dengan informasi dalam infografik!\nAlat dan bahan yang diperlukan untuk membuat pot tanaman adalah ....",
+            options: [
+              "Botol plastik bekas",
+              "Gunting",
+              "Tanah",
+              "Bibit tanaman"
+            ],
+            key: ["Botol plastik bekas", "Gunting", "Tanah", "Bibit tanaman"]
+          },
+          {
+            id: 4,
+            type: "single",
+            question: "Mengapa botol harus dicuci dan dikeringkan sebelum digunakan?",
+            options: [
+              "Agar botol lebih mudah dipotong menggunakan gunting.",
+              "Agar botol memiliki ukuran yang sesuai untuk tanaman.",
+              "Agar botol siap digunakan sebagai wadah yang bersih.",
+              "Agar garis yang dibuat dengan spidol menjadi lebih panjang."
+            ],
+            key: "Agar botol siap digunakan sebagai wadah yang bersih."
+          },
+          {
+            id: 5,
+            type: "multiple",
+            question: "Centang semua pernyataan yang dapat disimpulkan dari urutan langkah dalam infografik!",
+            options: [
+              "Botol perlu dipotong sebelum digunakan sebagai wadah tanah.",
+              "Lubang dibuat agar bagian botol siap digunakan sebagai pot.",
+              "Bibit tanaman dimasukkan setelah tanah berada di dalam pot.",
+              "Tanah dimasukkan sebelum botol diberi garis."
+            ],
+            key: [
+              "Botol perlu dipotong sebelum digunakan sebagai wadah tanah.",
+              "Lubang dibuat agar bagian botol siap digunakan sebagai pot.",
+              "Bibit tanaman dimasukkan setelah tanah berada di dalam pot."
+            ]
+          },
+          {
+            id: 6,
+            type: "table_tf",
+            question: "Tentukan apakah pernyataan berikut Benar (B) atau Salah (S) berdasarkan urutan langkah dalam infografik:",
+            rows: [
+              { text: "Jika tanah dimasukkan sebelum botol dipotong, prosedur tidak mengikuti urutan dalam infografik.", key: "Benar" },
+              { text: "Bibit tanaman dapat dimasukkan sebelum tanah karena langkah tersebut tidak berpengaruh.", key: "Salah" },
+              { text: "Pemotongan botol dilakukan setelah garis dibuat dengan spidol.", key: "Benar" },
+              { text: "Botol yang kuat dipilih agar pot dapat digunakan lebih lama.", key: "Benar" }
+            ]
+          },
+          {
+            id: 7,
+            type: "single",
+            question: "Seorang siswa mengubah urutan prosedur menjadi sebagai berikut:\nMencuci botol → membuat garis → memotong botol → memasukkan tanah → membuat lubang → menanam bibit.\nEvaluasi yang paling tepat terhadap perubahan tersebut adalah ....",
+            options: [
+              "tepat, karena lubang dapat dibuat setelah tanah dimasukkan",
+              "tepat, karena urutan langkah dalam prosedur dapat dilakukan secara bebas",
+              "kurang tepat, karena lubang seharusnya dibuat sebelum tanah dimasukkan",
+              "kurang tepat, karena bibit seharusnya ditanam sebelum botol dipotong"
+            ],
+            key: "kurang tepat, karena lubang seharusnya dibuat sebelum tanah dimasukkan"
+          },
+          {
+            id: 8,
+            type: "multiple",
+            question: "Centang semua pernyataan yang menunjukkan kelebihan penyajian prosedur dalam bentuk infografik tersebut!",
+            options: [
+              "Langkah-langkah disusun menggunakan nomor secara berurutan.",
+              "Setiap langkah dilengkapi ilustrasi yang sesuai dengan kegiatan.",
+              "Informasi alat dan bahan ditempatkan sebelum langkah-langkah.",
+              "Semua informasi disajikan dalam paragraf panjang tanpa gambar."
+            ],
+            key: [
+              "Langkah-langkah disusun menggunakan nomor secara berurutan.",
+              "Setiap langkah dilengkapi ilustrasi yang sesuai dengan kegiatan.",
+              "Informasi alat dan bahan ditempatkan sebelum langkah-langkah."
+            ]
+          },
+          {
+            id: 9,
+            type: "table_tf",
+            question: "Tentukan apakah pernyataan tentang efektivitas infografik berikut Benar (B) atau Salah (S):",
+            rows: [
+              { text: "Penggunaan gambar membantu pembaca memahami kegiatan pada setiap langkah.", key: "Benar" },
+              { text: "Penomoran 1–6 membantu pembaca mengetahui urutan pembuatan pot.", key: "Benar" },
+              { text: "Informasi alat dan bahan tidak diperlukan karena pembaca dapat langsung mengikuti gambar.", key: "Salah" },
+              { text: "Bagian tips memberikan informasi tambahan tentang pemilihan botol.", key: "Benar" }
+            ]
+          },
+          {
+            id: 10,
+            type: "multiple",
+            question: "Centang semua pernyataan yang menunjukkan bahwa infografik tersebut menarik dan bermanfaat bagi pembaca!",
+            options: [
+              "Menggunakan gambar untuk memperjelas setiap tahapan.",
+              "Informasi disajikan secara singkat dan berurutan.",
+              "Mengajak pembaca memanfaatkan botol plastik bekas menjadi benda berguna",
+              "Berisi hiasan sehingga langkah-langkah tidak diperlukan untuk dipahami."
+            ],
+            key: [
+              "Menggunakan gambar untuk memperjelas setiap tahapan.",
+              "Informasi disajikan secara singkat dan berurutan.",
+              "Mengajak pembaca memanfaatkan botol plastik bekas menjadi benda berguna"
+            ]
+          }
+        ]
+      },
+
+      tp2: {
+        title: "TP 2. Membaca dan Memirsa",
+        subtitle: "Bacalah Cerita Prosedural Berikut untuk Menjawab Soal Nomor 11 – 20",
+        storyTitle: "KOTAK KAYU DI SUDUT TAMAN",
+        storyText: `Sepulang sekolah, Raka melihat kotak kayu bekas di sudut gudang. Ia teringat pesan Bu Lestari untuk memanfaatkan barang bekas menjadi sesuatu yang berguna. Raka kemudian mengajak Dimas membuat persemaian sederhana untuk menumbuhkan bibit tanaman.
+
+Mereka terlebih dahulu membersihkan kotak tersebut dan memastikan tidak ada paku yang menonjol. Setelah itu, Raka melubangi bagian bawah kotak agar air tidak menggenang. Mereka memasukkan campuran tanah dan kompos, lalu meratakannya dengan tangan.
+
+Dimas mengambil beberapa biji cabai dari ruang praktik. Sesuai petunjuk pada kemasan, mereka membuat lubang kecil dengan jarak yang teratur. Setiap lubang diisi satu biji, kemudian ditutup tipis menggunakan tanah. Setelah selesai, Raka menyiram permukaan tanah dengan air secukupnya agar tidak mengikis media tanam.
+
+Mereka meletakkan kotak tersebut di tempat yang mendapat cahaya matahari pagi. Setiap hari, Raka memeriksa kelembapan tanah. Jika permukaannya mulai kering, ia menambahkan air secukupnya. Beberapa hari kemudian, tunas-tunas kecil mulai muncul. Raka tersenyum melihat hasil kerja mereka. Ia menyadari bahwa memanfaatkan barang bekas ternyata dapat menjadi kegiatan sederhana yang bermanfaat bagi lingkungan.`,
+        questions: [
+          {
+            id: 11,
+            type: "single",
+            question: "Kata yang termasuk kata sulit dalam teks dan berkaitan langsung dengan kegiatan menumbuhkan tanaman adalah ....",
+            options: ["persemaian", "gudang", "kemasan", "permukaan"],
+            key: "persemaian"
+          },
+          {
+            id: 12,
+            type: "single",
+            question: "Makna kata menggenang pada paragraf kedua adalah ....",
+            options: [
+              "mengalir dengan cepat menuju tempat rendah",
+              "terkumpul pada suatu tempat dan tidak segera mengalir",
+              "meresap secara perlahan ke dalam lapisan tanah",
+              "menyebar secara merata ke seluruh permukaan"
+            ],
+            key: "terkumpul pada suatu tempat dan tidak segera mengalir"
+          },
+          {
+            id: 13,
+            type: "single",
+            question: "Kata mengikis pada paragraf ketiga memiliki makna ....",
+            options: [
+              "membuat sesuatu menjadi lebih padat dan kuat",
+              "mengurangi atau menghilangkan bagian secara perlahan",
+              "mencampurkan beberapa bahan agar menjadi merata",
+              "memindahkan sesuatu dari tempat awal menuju tempat lain"
+            ],
+            key: "mengurangi atau menghilangkan bagian secara perlahan"
+          },
+          {
+            id: 14,
+            type: "single",
+            question: "Berdasarkan konteks cerita, alasan Raka melubangi bagian bawah kotak adalah ....",
+            options: [
+              "agar udara dapat masuk ke dalam media tanam",
+              "agar tanah menjadi lebih ringan setelah disiram",
+              "agar biji memperoleh cahaya matahari secara langsung",
+              "agar kelebihan air dapat keluar dari kotak"
+            ],
+            key: "agar kelebihan air dapat keluar dari kotak"
+          },
+          {
+            id: 15,
+            type: "single",
+            question: "Makna kata persemaian dalam teks dapat dipahami sebagai ....",
+            options: [
+              "tempat untuk menyimpan berbagai peralatan berkebun",
+              "tempat untuk mencampurkan tanah dengan bahan organik",
+              "tempat untuk menumbuhkan tanaman dari biji atau bibit",
+              "tempat untuk meletakkan tanaman sebelum dipindahkan"
+            ],
+            key: "tempat untuk menumbuhkan tanaman dari biji atau bibit"
+          },
+          {
+            id: 16,
+            type: "single",
+            question: "Jika kata mengikis pada kalimat tersebut diganti dengan kata menghanyutkan, perubahan makna yang paling mungkin terjadi adalah ....",
+            options: [
+              "air dianggap menyebabkan media tanam terbawa aliran",
+              "air dianggap membuat media tanam menjadi lebih lembap",
+              "air dianggap membantu biji tumbuh lebih cepat dan merata",
+              "air dianggap membuat permukaan media menjadi lebih padat"
+            ],
+            key: "air dianggap menyebabkan media tanam terbawa aliran"
+          },
+          {
+            id: 17,
+            type: "multiple",
+            question: "Centang beberapa jawaban yang menunjukkan makna kata menggenang berdasarkan konteks teks!",
+            options: [
+              "Air tertahan pada bagian tertentu dan belum mengalir keluar.",
+              "Air terkumpul pada suatu tempat dalam jumlah tertentu.",
+              "Air bergerak melalui lubang menuju bagian luar kotak.",
+              "Air menyebar ke seluruh bagian tanah secara perlahan."
+            ],
+            key: [
+              "Air tertahan pada bagian tertentu dan belum mengalir keluar.",
+              "Air terkumpul pada suatu tempat dalam jumlah tertentu."
+            ]
+          },
+          {
+            id: 18,
+            type: "multiple",
+            question: "Centang pernyataan yang tepat tentang kata persemaian berdasarkan penggunaannya dalam teks!",
+            options: [
+              "Berkaitan dengan kegiatan awal untuk menumbuhkan tanaman.",
+              "Digunakan untuk menyebut tempat menumbuhkan biji tanaman.",
+              "Merujuk pada tempat penyimpanan alat dan bahan berkebun.",
+              "Berkaitan dengan kegiatan merawat tanaman yang telah dipanen."
+            ],
+            key: [
+              "Berkaitan dengan kegiatan awal untuk menumbuhkan tanaman.",
+              "Digunakan untuk menyebut tempat menumbuhkan biji tanaman."
+            ]
+          },
+          {
+            id: 19,
+            type: "multiple",
+            question: "Raka menggunakan beberapa kata tentang bercocok tanam. Centang pernyataan yang menunjukkan pemahaman yang tepat!",
+            options: [
+              "Kata persemaian memperjelas kegiatan awal sebelum tanaman tumbuh.",
+              "Kata menggenang menjelaskan keadaan air yang tidak segera mengalir.",
+              "Kata mengikis menunjukkan bahwa air harus diberikan dalam jumlah berlebihan.",
+              "Kata kemasan menunjukkan tempat khusus untuk menyimpan bibit tanaman."
+            ],
+            key: [
+              "Kata persemaian memperjelas kegiatan awal sebelum tanaman tumbuh.",
+              "Kata menggenang menjelaskan keadaan air yang tidak segera mengalir."
+            ]
+          },
+          {
+            id: 20,
+            type: "table_tf",
+            question: "Tentukan apakah setiap pernyataan berikut Benar (B) atau Salah (S) berdasarkan cerita:",
+            rows: [
+              { text: "Makna kata persemaian dapat dipahami melalui konteks kegiatan menumbuhkan bibit tanaman.", key: "Benar" },
+              { text: "Kata menggenang digunakan untuk menggambarkan air yang terkumpul dan tidak segera mengalir.", key: "Benar" },
+              { text: "Kata mengikis dalam teks menunjukkan kegiatan menambah tanah agar media tanam semakin tebal.", key: "Salah" },
+              { text: "Penggunaan kata-kata tersebut membantu pembaca memahami langkah yang dilakukan Raka dan Dimas.", key: "Benar" }
+            ]
+          }
+        ]
+      },
+
+      tp3: {
+        title: "TP 3. Berbicara dan Mempresentasikan",
+        subtitle: "Cermati Teks Prosedur Kegiatan Wawancara Berikut untuk Menjawab Soal Nomor 21 – 30",
+        storyTitle: "MISI JURNALIS MUDA",
+        storyText: `Kelompok Dira mendapat tugas membuat video wawancara tentang kebersihan kantin sekolah. Mereka memilih pengelola kantin sebagai narasumber karena dianggap mengetahui kebiasaan siswa dalam menjaga kebersihan.
+
+Sehari sebelum wawancara, Dira dan teman-temannya menentukan topik, menyusun beberapa pertanyaan berdasarkan ADIKSIMBA, lalu membuat janji dengan narasumber. Mereka juga memeriksa gawai yang akan digunakan untuk merekam. Kelompok itu memilih tempat yang tidak terlalu bising agar suara terdengar jelas.
+
+Saat wawancara dimulai, Dira mengucapkan salam, memperkenalkan diri dan kelompoknya, kemudian meminta izin untuk merekam. Ia mengajukan pertanyaan secara berurutan menggunakan bahasa yang santun. Ketika narasumber menjawab, Dira memperhatikan dengan melakukan kontak mata dan sesekali mengangguk. Salah satu pertanyaan meminta narasumber menjelaskan cara mengurangi penggunaan plastik di kantin.
+
+Setelah semua pertanyaan selesai, Dira mengucapkan terima kasih dan meminta foto bersama. Kelompoknya kemudian memeriksa rekaman dan menyusun video. Bagian pembuka berisi salam, topik, dan perkenalan narasumber. Bagian isi memuat tanya jawab, sedangkan bagian penutup berisi kesimpulan dan penutupan. Mereka memastikan video berdurasi antara dua hingga tiga menit sebelum mengumpulkannya.`,
+        questions: [
+          {
+            id: 21,
+            type: "single",
+            question: "Informasi yang menunjukkan kegiatan pra-wawancara (persiapan) dalam teks adalah ....",
+            options: [
+              "Dira menyusun pertanyaan dan membuat janji dengan narasumber.",
+              "Dira mengajukan pertanyaan dan memperhatikan jawaban narasumber.",
+              "Dira mengucapkan terima kasih dan meminta foto bersama narasumber.",
+              "Dira memeriksa rekaman dan menyusun bagian video hasil wawancara."
+            ],
+            key: "Dira menyusun pertanyaan dan membuat janji dengan narasumber."
+          },
+          {
+            id: 22,
+            type: "single",
+            question: "Alasan kelompok Dira memilih tempat yang tidak terlalu bising adalah ....",
+            options: [
+              "agar wajah narasumber terlihat jelas selama proses wawancara",
+              "agar suara percakapan dapat terdengar dengan jelas dalam rekaman",
+              "agar kelompok dapat menyelesaikan wawancara dalam waktu singkat",
+              "agar narasumber dapat menjawab pertanyaan dengan lebih lengkap"
+            ],
+            key: "agar suara percakapan dapat terdengar dengan jelas dalam rekaman"
+          },
+          {
+            id: 23,
+            type: "single",
+            question: "Tindakan yang dilakukan Dira sebelum mulai mengajukan pertanyaan adalah ....",
+            options: [
+              "memeriksa hasil rekaman dan menyusun bagian penutup video",
+              "meminta foto bersama dan menyampaikan kesimpulan wawancara",
+              "mengucapkan salam, memperkenalkan diri, dan meminta izin merekam",
+              "menentukan durasi video dan memilih tempat untuk menyimpan rekaman"
+            ],
+            key: "mengucapkan salam, memperkenalkan diri, dan meminta izin merekam"
+          },
+          {
+            id: 24,
+            type: "single",
+            question: "Perilaku Dira yang melakukan kontak mata dan sesekali mengangguk menunjukkan bahwa ia ....",
+            options: [
+              "berusaha menunjukkan bahwa wawancara harus segera diselesaikan",
+              "berusaha menerapkan sikap mendengarkan secara aktif",
+              "berusaha mengubah jawaban narasumber sesuai pertanyaannya",
+              "berusaha mengurangi jumlah pertanyaan selama wawancara"
+            ],
+            key: "berusaha menerapkan sikap mendengarkan secara aktif"
+          },
+          {
+            id: 25,
+            type: "single",
+            question: "Jika kelompok Dira langsung merekam tanpa menyusun pertanyaan terlebih dahulu, dampak yang paling mungkin terjadi adalah ....",
+            options: [
+              "isi wawancara berpotensi kurang terarah dan informasi penting terlewat",
+              "durasi wawancara berpotensi menjadi lebih singkat dan mudah disunting",
+              "narasumber berpotensi memberikan jawaban lebih panjang daripada biasanya",
+              "kualitas gambar berpotensi menjadi lebih baik karena proses lebih spontan"
+            ],
+            key: "isi wawancara berpotensi kurang terarah dan informasi penting terlewat"
+          },
+          {
+            id: 26,
+            type: "single",
+            question: "Pertanyaan tentang cara mengurangi penggunaan plastik di kantin termasuk pertanyaan “bagaimana” karena ....",
+            options: [
+              "meminta narasumber menyebutkan waktu berlangsungnya kegiatan",
+              "meminta narasumber menjelaskan cara melakukan suatu kegiatan",
+              "meminta narasumber menyebutkan orang yang terlibat dalam kegiatan",
+              "meminta narasumber menjelaskan alasan terjadinya suatu kegiatan"
+            ],
+            key: "meminta narasumber menjelaskan cara melakukan suatu kegiatan"
+          },
+          {
+            id: 27,
+            type: "multiple",
+            question: "Centang tindakan yang termasuk tahap pra-wawancara berdasarkan teks!",
+            options: [
+              "Menentukan topik wawancara bersama anggota kelompok.",
+              "Menyusun pertanyaan berdasarkan unsur ADIKSIMBA.",
+              "Meminta izin kepada narasumber sebelum mulai merekam.",
+              "Memeriksa gawai yang akan digunakan untuk merekam."
+            ],
+            key: [
+              "Menentukan topik wawancara bersama anggota kelompok.",
+              "Menyusun pertanyaan berdasarkan unsur ADIKSIMBA.",
+              "Memeriksa gawai yang akan digunakan untuk merekam."
+            ]
+          },
+          {
+            id: 28,
+            type: "multiple",
+            question: "Centang pernyataan yang sesuai dengan prosedur pelaksanaan wawancara dalam teks!",
+            options: [
+              "Pewawancara menggunakan bahasa yang santun ketika bertanya.",
+              "Pewawancara mengajukan pertanyaan secara berurutan kepada narasumber.",
+              "Pewawancara mengabaikan jawaban narasumber agar wawancara lebih cepat.",
+              "Pewawancara menunjukkan perhatian melalui kontak mata dan anggukan."
+            ],
+            key: [
+              "Pewawancara menggunakan bahasa yang santun ketika bertanya.",
+              "Pewawancara mengajukan pertanyaan secara berurutan kepada narasumber.",
+              "Pewawancara menunjukkan perhatian melalui kontak mata dan anggukan."
+            ]
+          },
+          {
+            id: 29,
+            type: "multiple",
+            question: "Kelompok Dira ingin menghasilkan video wawancara yang baik. Centang tindakan yang tepat!",
+            options: [
+              "Memastikan video memiliki pembuka, isi, dan penutup yang jelas.",
+              "Memeriksa durasi video agar sesuai dengan ketentuan tugas.",
+              "Menghilangkan seluruh bagian tanya jawab agar video lebih singkat.",
+              "Menyusun hasil rekaman setelah seluruh proses wawancara selesai."
+            ],
+            key: [
+              "Memastikan video memiliki pembuka, isi, dan penutup yang jelas.",
+              "Memeriksa durasi video agar sesuai dengan ketentuan tugas.",
+              "Menyusun hasil rekaman setelah seluruh proses wawancara selesai."
+            ]
+          },
+          {
+            id: 30,
+            type: "table_tf",
+            question: "Berdasarkan teks wawancara, tentukan Benar (B) atau Salah (S) pada pernyataan berikut:",
+            rows: [
+              { text: "Penyusunan pertanyaan sebelum wawancara membantu pewawancara menjaga arah pembicaraan.", key: "Benar" },
+              { text: "Meminta izin merekam merupakan bagian dari sikap yang perlu diperhatikan ketika memulai wawancara.", key: "Benar" },
+              { text: "Bagian isi video sebaiknya digunakan untuk memperkenalkan topik dan narasumber kepada penonton.", key: "Salah" },
+              { text: "Memeriksa durasi video merupakan salah satu langkah untuk memastikan hasil praktik sesuai ketentuan tugas.", key: "Benar" }
+            ]
+          }
+        ]
+      },
+
+      tp4: {
+        title: "TP 4. Menulis",
+        subtitle: "Cermati Esai & Poster Kompos Berikut untuk Menjawab Soal Nomor 31 – 40",
+        storyTitle: "MEMBIASAKAN PEMANFAATAN BARANG BEKAS DI SEKOLAH",
+        storyText: `Pemanfaatan barang bekas perlu dibiasakan di lingkungan sekolah. Kebiasaan tersebut tidak hanya membantu mengurangi jumlah sampah, tetapi juga dapat melatih murid menjadi lebih kreatif dan bertanggung jawab terhadap lingkungan. Oleh karena itu, kegiatan pemanfaatan barang bekas sebaiknya dilakukan secara terencana dan berkelanjutan.
+
+Salah satu alasan kegiatan tersebut penting adalah karena barang bekas masih dapat memiliki fungsi baru. Dengan sedikit kreativitas, benda yang semula dianggap tidak berguna dapat diubah menjadi sesuatu yang bermanfaat. Kegiatan semacam ini juga dapat menjadi aktivitas pembelajaran yang membuat murid terlibat secara langsung dalam menjaga lingkungan.
+
+Saya pernah membuat pot tanaman dari botol plastik bersama beberapa teman. Kami mencuci botol hingga bersih, mengeringkannya, lalu memotong bagian tengah botol. Setelah itu, kami membuat beberapa lubang kecil di bagian bawah, memasukkan tanah, dan menanam bibit. Pot tersebut kemudian disiram secukupnya dan diletakkan di tempat yang mendapat cahaya matahari. Kami juga mencari informasi tambahan menggunakan komputer tentang cara merawat tanaman agar dapat tumbuh dengan baik.
+
+Pengalaman tersebut membuat saya menyadari bahwa kepedulian terhadap lingkungan dapat dibangun melalui pengalaman nyata. Menurut saya, sekolah dapat mendorong kegiatan semacam ini secara rutin. Dengan demikian, pemanfaatan barang bekas bukan hanya mengurangi sampah, tetapi juga menjadi sarana untuk membentuk kebiasaan kreatif dan bertanggung jawab.`,
+        questions: [
+          {
+            id: 31,
+            type: "single",
+            question: "Gagasan utama yang dikemukakan penulis dalam esai tersebut adalah ....",
+            options: [
+              "Pemanfaatan barang bekas perlu dibiasakan dalam kegiatan sekolah.",
+              "Pembuatan pot tanaman dapat dilakukan menggunakan botol plastik bekas.",
+              "Perawatan tanaman membutuhkan informasi yang diperoleh melalui komputer.",
+              "Kegiatan lingkungan dapat dilakukan murid melalui pengalaman secara langsung."
+            ],
+            key: "Pemanfaatan barang bekas perlu dibiasakan dalam kegiatan sekolah."
+          },
+          {
+            id: 32,
+            type: "single",
+            question: "Paragraf kedua dalam esai tersebut berfungsi untuk ....",
+            options: [
+              "memperkenalkan topik dan menyampaikan pendapat penulis",
+              "memberikan alasan yang mendukung gagasan yang dikemukakan",
+              "menceritakan pengalaman penulis ketika melakukan kegiatan lingkungan",
+              "menegaskan kembali gagasan melalui simpulan yang disampaikan penulis"
+            ],
+            key: "memberikan alasan yang mendukung gagasan yang dikemukakan"
+          },
+          {
+            id: 33,
+            type: "single",
+            question: "Kata yang termasuk kosakata serapan dan digunakan dalam esai tersebut adalah ....",
+            options: [
+              "barang, jumlah, dan tanah",
+              "kegiatan, sekolah, dan tanaman",
+              "aktivitas, informasi, dan komputer",
+              "lingkungan, kebiasaan, dan pengalaman"
+            ],
+            key: "aktivitas, informasi, dan komputer"
+          },
+          {
+            id: 34,
+            type: "single",
+            question: "Mengapa pengalaman membuat pot tanaman digunakan penulis dalam bagian isi esai?",
+            options: [
+              "Untuk menunjukkan contoh yang mendukung gagasan tentang pemanfaatan barang bekas.",
+              "Untuk menjelaskan seluruh kegiatan yang pernah dilakukan penulis bersama temannya.",
+              "Untuk memperkenalkan alat dan bahan yang dapat digunakan dalam kegiatan lingkungan.",
+              "Untuk menunjukkan bahwa pembuatan pot merupakan kegiatan utama yang harus dilakukan sekolah."
+            ],
+            key: "Untuk menunjukkan contoh yang mendukung gagasan tentang pemanfaatan barang bekas."
+          },
+          {
+            id: 35,
+            type: "single",
+            question: "Jika pengalaman pada paragraf ketiga diubah menjadi teks prosedur, urutan langkah yang paling tepat adalah ....",
+            options: [
+              "mencuci botol → memotong botol → membuat lubang → memasukkan tanah → menanam bibit",
+              "memotong botol → mencuci botol → menanam bibit → membuat lubang → memasukkan tanah",
+              "membuat lubang → memasukkan tanah → mencuci botol → memotong botol → menanam bibit",
+              "memasukkan tanah → membuat lubang → menanam bibit → mencuci botol → memotong botol"
+            ],
+            key: "mencuci botol → memotong botol → membuat lubang → memasukkan tanah → menanam bibit"
+          },
+          {
+            id: 36,
+            type: "single",
+            question: "Judul yang paling tepat apabila pengalaman pada paragraf ketiga dikembangkan menjadi poster prosedur adalah ....",
+            options: [
+              "Manfaat Pemanfaatan Barang Bekas bagi Lingkungan Sekolah",
+              "Pengalaman Murid Membuat Pot Tanaman di Lingkungan Sekolah",
+              "Cara Membuat Pot Tanaman dari Botol Plastik Bekas",
+              "Pentingnya Kreativitas Murid dalam Menjaga Lingkungan Sekolah"
+            ],
+            key: "Cara Membuat Pot Tanaman dari Botol Plastik Bekas"
+          },
+          {
+            id: 37,
+            type: "multiple",
+            question: "Centang pernyataan yang tepat mengenai kosakata serapan dalam stimulus!",
+            options: [
+              "Kata komputer merupakan bentuk yang telah disesuaikan dari kata computer.",
+              "Kata aktivitas merupakan bentuk yang telah disesuaikan dari kata activity.",
+              "Kata informasi merupakan bentuk yang telah disesuaikan dari kata information.",
+              "Kata lingkungan merupakan bentuk yang telah disesuaikan dari kata environment."
+            ],
+            key: [
+              "Kata komputer merupakan bentuk yang telah disesuaikan dari kata computer.",
+              "Kata aktivitas merupakan bentuk yang telah disesuaikan dari kata activity.",
+              "Kata informasi merupakan bentuk yang telah disesuaikan dari kata information."
+            ]
+          },
+          {
+            id: 38,
+            type: "multiple",
+            question: "Apabila pengalaman pada paragraf ketiga diubah menjadi teks prosedur, informasi yang perlu dimasukkan adalah ....",
+            options: [
+              "Tujuan kegiatan yang menjelaskan hasil yang akan dibuat.",
+              "Alat dan bahan yang diperlukan untuk melakukan kegiatan.",
+              "Langkah kegiatan yang disusun sesuai urutan pelaksanaannya.",
+              "Perasaan penulis setelah berhasil melakukan kegiatan tersebut."
+            ],
+            key: [
+              "Tujuan kegiatan yang menjelaskan hasil yang akan dibuat.",
+              "Alat dan bahan yang diperlukan untuk melakukan kegiatan.",
+              "Langkah kegiatan yang disusun sesuai urutan pelaksanaannya."
+            ]
+          },
+          {
+            id: 39,
+            type: "multiple",
+            question: "Agar pengalaman dapat dikembangkan menjadi poster prosedur yang menarik, unsur yang sebaiknya digunakan adalah ....",
+            options: [
+              "Judul yang menggambarkan kegiatan yang akan dilakukan.",
+              "Langkah-langkah yang disusun secara runtut dan jelas.",
+              "Gambar atau ilustrasi yang sesuai dengan isi langkah.",
+              "Uraian panjang mengenai pendapat pribadi penulis tentang sampah."
+            ],
+            key: [
+              "Judul yang menggambarkan kegiatan yang akan dilakukan.",
+              "Langkah-langkah yang disusun secara runtut dan jelas.",
+              "Gambar atau ilustrasi yang sesuai dengan isi langkah."
+            ]
+          },
+          {
+            id: 40,
+            type: "table_tf_with_image",
+            question: "Berdasarkan struktur esai dan poster kompos berikut, tentukan Benar (B) atau Salah (S) pada setiap pernyataan:",
+            rows: [
+              { text: "Gambar tersebut termasuk dalam kategori poster prosedur.", key: "Benar", hasImageStimulus: true },
+              { text: "Pengalaman membuat pot tanaman digunakan sebagai contoh untuk mendukung gagasan penulis.", key: "Benar" },
+              { text: "Paragraf terakhir menegaskan kembali pandangan penulis tentang pemanfaatan barang bekas.", key: "Benar" },
+              { text: "Gagasan penulis dalam teks didukung oleh pengalaman yang dialami secara langsung.", key: "Benar" }
+            ]
+          }
+        ]
+      }
+    };
+
+    let student = { name: "", class: "" };
+    let userAnswers = {};
+
+    function renderPotInfographicHTML() {
+      return `
+        <div class="bg-amber-50/70 border-2 border-emerald-500 rounded-3xl p-4 sm:p-5 mb-5 shadow-xs text-slate-800">
+          <div class="text-center pb-2.5 border-b-2 border-dashed border-emerald-300 mb-4">
+            <span class="inline-block bg-emerald-700 text-white font-black px-3 py-1 rounded-full text-[10px] sm:text-xs uppercase tracking-wider mb-1.5">
+              🌱 Infografik Stimulus TP 1
+            </span>
+            <h3 class="text-lg sm:text-2xl font-black text-emerald-950 tracking-tight">
+              CARA MEMBUAT POT TANAMAN DARI BOTOL BEKAS
+            </h3>
+          </div>
+
+          <div class="mb-4 bg-white rounded-2xl p-3 border border-amber-200">
+            <h4 class="text-center font-black text-amber-900 text-xs sm:text-sm mb-2">🛠️ Alat dan Bahan:</h4>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center text-[11px]">
+              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 font-bold">1 Botol 1,5L</div>
+              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 font-bold">Gunting</div>
+              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 font-bold">Spidol</div>
+              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 font-bold">Paku</div>
+              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 font-bold">Tanah</div>
+              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 font-bold">Bibit</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs">
+            <div class="bg-white p-3 rounded-2xl border border-slate-200">
+              <span class="w-5 h-5 rounded-full bg-rose-500 text-white font-black text-[10px] inline-flex items-center justify-center mr-1">1</span>
+              <strong class="text-rose-600">BERSIHKAN:</strong> Cuci botol bekas hingga bersih, lalu keringkan.
+            </div>
+            <div class="bg-white p-3 rounded-2xl border border-slate-200">
+              <span class="w-5 h-5 rounded-full bg-amber-500 text-white font-black text-[10px] inline-flex items-center justify-center mr-1">2</span>
+              <strong class="text-amber-600">TANDAI:</strong> Buat garis melingkar di tengah botol dengan spidol.
+            </div>
+            <div class="bg-white p-3 rounded-2xl border border-slate-200">
+              <span class="w-5 h-5 rounded-full bg-blue-500 text-white font-black text-[10px] inline-flex items-center justify-center mr-1">3</span>
+              <strong class="text-blue-600">POTONG:</strong> Potong botol mengikuti garis gunting.
+            </div>
+            <div class="bg-white p-3 rounded-2xl border border-slate-200">
+              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white font-black text-[10px] inline-flex items-center justify-center mr-1">4</span>
+              <strong class="text-emerald-600">LUBANGI:</strong> Buat lubang kecil di bawah botol pakai paku.
+            </div>
+            <div class="bg-white p-3 rounded-2xl border border-slate-200">
+              <span class="w-5 h-5 rounded-full bg-indigo-600 text-white font-black text-[10px] inline-flex items-center justify-center mr-1">5</span>
+              <strong class="text-indigo-600">ISI TANAH:</strong> Masukkan tanah secukupnya ke potongan botol.
+            </div>
+            <div class="bg-white p-3 rounded-2xl border border-slate-200">
+              <span class="w-5 h-5 rounded-full bg-teal-600 text-white font-black text-[10px] inline-flex items-center justify-center mr-1">6</span>
+              <strong class="text-teal-600">TANAM:</strong> Masukkan bibit tanaman. Pot siap digunakan!
+            </div>
+          </div>
+          
+          <div class="mt-3 p-2.5 bg-amber-100 rounded-xl text-amber-900 text-[11px] font-bold">
+            💡 Tips: Gunakan botol yang kuat dan tidak mudah pecah agar pot lebih awet.
+          </div>
+        </div>
+      `;
+    }
+
+    function renderKomposInfographicHTML() {
+      return `
+        <div class="my-3 bg-orange-50 border-2 border-orange-400 rounded-2xl p-3.5 text-slate-800 text-xs">
+          <div class="text-center pb-2 border-b border-orange-200 mb-2.5">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Stimulus Poster Prosedur</span>
+            <h5 class="text-sm sm:text-base font-black text-emerald-950 mt-1">CARA MEMBUAT KOMPOS ORGANIK</h5>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+            <div class="bg-white p-2 rounded-xl border border-orange-200 font-semibold">1. Kumpulkan Sampah Organik</div>
+            <div class="bg-white p-2 rounded-xl border border-orange-200 font-semibold">2. Cacah/Potong Kecil-kecil</div>
+            <div class="bg-white p-2 rounded-xl border border-orange-200 font-semibold">3. Masukkan ke Wadah Komposter</div>
+            <div class="bg-white p-2 rounded-xl border border-orange-200 font-semibold">4. Tambahkan Daun/Tanah</div>
+            <div class="bg-white p-2 rounded-xl border border-orange-200 font-semibold">5. Aduk Rutin Berkala</div>
+            <div class="bg-white p-2 rounded-xl border border-orange-200 font-semibold">6. Kompos Siap Digunakan!</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleStory(key) {
+      const storyEl = document.getElementById(`storyBody_${key}`);
+      const btnText = document.getElementById(`storyBtnText_${key}`);
+      const icon = document.getElementById(`storyIcon_${key}`);
+
+      if (storyEl.classList.contains('hidden')) {
+        storyEl.classList.remove('hidden');
+        btnText.textContent = "Sembunyikan Bacaan";
+        icon.className = "fa-solid fa-chevron-up text-xs";
+      } else {
+        storyEl.classList.add('hidden');
+        btnText.textContent = "Buka Teks Bacaan";
+        icon.className = "fa-solid fa-chevron-down text-xs";
+      }
+    }
+
+    function renderAllQuestions() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
+
+      const tpKeys = ["tp1", "tp2", "tp3", "tp4"];
+      tpKeys.forEach((key) => {
+        const tp = examData[key];
+        const sectionEl = document.createElement("section");
+        sectionEl.className = "bg-white rounded-3xl border border-slate-200 p-4 sm:p-7 shadow-xs";
+
+        let headerHTML = `
+          <div class="border-b border-slate-200 pb-3 mb-5">
+            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 font-black text-xs rounded-full uppercase tracking-wider mb-1">${tp.title}</span>
+            <h3 class="text-base sm:text-xl font-black text-slate-900 leading-snug">${tp.subtitle}</h3>
+          </div>
+        `;
+
+        if (key === "tp1") {
+          headerHTML += renderPotInfographicHTML();
+        } else if (tp.storyText) {
+          headerHTML += `
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">📖</span>
+                  <h4 class="font-black text-slate-900 text-xs sm:text-sm uppercase tracking-wide">${tp.storyTitle}</h4>
+                </div>
+                <button type="button" onclick="toggleStory('${key}')" class="px-3 py-1 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold flex items-center gap-1.5 transition">
+                  <span id="storyBtnText_${key}">Buka Teks Bacaan</span>
+                  <i id="storyIcon_${key}" class="fa-solid fa-chevron-down text-xs"></i>
+                </button>
+              </div>
+              <div id="storyBody_${key}" class="hidden text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line border-t border-slate-200 pt-3 mt-3">
+                ${tp.storyText}
+              </div>
+            </div>
+          `;
+        }
+
+        sectionEl.innerHTML = headerHTML;
+
+        const qContainer = document.createElement("div");
+        qContainer.className = "space-y-6";
+
+        tp.questions.forEach((q) => {
+          const qCard = document.createElement("div");
+          qCard.id = `qCard_${q.id}`;
+          qCard.className = "p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white transition hover:border-blue-300";
+
+          let qTypeBadge = "";
+          if (q.type === "single") qTypeBadge = `<span class="px-2 py-0.5 rounded-md bg-sky-100 text-sky-800 text-[10px] font-black">PG Tunggal (2 Poin)</span>`;
+          else if (q.type === "multiple") qTypeBadge = `<span class="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[10px] font-black">PG Kompleks (3 Poin)</span>`;
+          else qTypeBadge = `<span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[10px] font-black">Tabel Benar/Salah (3 Poin)</span>`;
+
+          let qBody = `
+            <div class="flex items-center justify-between gap-2 mb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-7 h-7 rounded-xl bg-slate-900 text-white font-black flex items-center justify-center text-xs">${q.id}</span>
+                ${qTypeBadge}
+              </div>
+              <span id="badge_status_${q.id}" class="text-[11px] font-bold text-slate-400">Belum dijawab</span>
+            </div>
+            <div class="text-sm sm:text-base font-bold text-slate-900 mb-4 whitespace-pre-line leading-relaxed">
+              ${q.question}
+            </div>
+          `;
+
+          if (q.type === "single") {
+            qBody += `<div class="space-y-2.5">`;
+            q.options.forEach((opt, optIdx) => {
+              const optId = `q_${q.id}_opt_${optIdx}`;
+              qBody += `
+                <label for="${optId}" class="flex items-start gap-3 p-3.5 rounded-2xl border-2 border-slate-200 hover:border-blue-400 bg-slate-50/40 active:bg-blue-50 cursor-pointer transition select-none">
+                  <input type="radio" id="${optId}" name="q_${q.id}" value="${opt.replace(/"/g, '&quot;')}" onchange="handleSingleSelect(${q.id}, this.value)" class="mt-0.5 w-5 h-5 text-blue-600 focus:ring-blue-500 flex-shrink-0">
+                  <span class="text-sm sm:text-base text-slate-800 font-semibold leading-snug">${opt}</span>
+                </label>
+              `;
+            });
+            qBody += `</div>`;
+          } else if (q.type === "multiple") {
+            qBody += `<div class="space-y-2.5">`;
+            q.options.forEach((opt, optIdx) => {
+              const optId = `q_${q.id}_chk_${optIdx}`;
+              qBody += `
+                <label for="${optId}" class="flex items-start gap-3 p-3.5 rounded-2xl border-2 border-slate-200 hover:border-indigo-400 bg-slate-50/40 active:bg-indigo-50 cursor-pointer transition select-none">
+                  <input type="checkbox" id="${optId}" name="q_${q.id}" value="${opt.replace(/"/g, '&quot;')}" onchange="handleMultipleSelect(${q.id})" class="mt-0.5 w-5 h-5 rounded-md text-indigo-600 focus:ring-indigo-500 flex-shrink-0">
+                  <span class="text-sm sm:text-base text-slate-800 font-semibold leading-snug">${opt}</span>
+                </label>
+              `;
+            });
+            qBody += `</div>`;
+          } else if (q.type === "table_tf" || q.type === "table_tf_with_image") {
+            qBody += `<div class="space-y-3 mt-2">`;
+            q.rows.forEach((row, rIdx) => {
+              const rowNum = rIdx + 1;
+              let extraContent = row.hasImageStimulus ? renderKomposInfographicHTML() : "";
+              
+              qBody += `
+                <div class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60">
+                  <div class="text-xs sm:text-sm font-bold text-slate-800 leading-snug mb-3">
+                    <span class="inline-block w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-center font-black text-[11px] mr-1.5">${rowNum}</span>
+                    ${row.text}
+                    ${extraContent}
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 text-xs font-black">
+                    <label class="p-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-emerald-500 active:bg-emerald-50 flex items-center justify-center gap-2 cursor-pointer transition">
+                      <input type="radio" name="q_${q.id}_row_${rIdx}" value="Benar" onchange="handleTableSelect(${q.id}, ${rIdx}, 'Benar')" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                      <span class="text-emerald-700">✓ BENAR</span>
+                    </label>
+                    <label class="p-2.5 rounded-xl border-2 border-slate-200 bg-white hover:border-rose-500 active:bg-rose-50 flex items-center justify-center gap-2 cursor-pointer transition">
+                      <input type="radio" name="q_${q.id}_row_${rIdx}" value="Salah" onchange="handleTableSelect(${q.id}, ${rIdx}, 'Salah')" class="w-4 h-4 text-rose-600 focus:ring-rose-500">
+                      <span class="text-rose-700">✗ SALAH</span>
+                    </label>
+                  </div>
+                </div>
+              `;
+            });
+            qBody += `</div>`;
+          }
+
+          qCard.innerHTML = qBody;
+          qContainer.appendChild(qCard);
+        });
+
+        sectionEl.appendChild(qContainer);
+        container.appendChild(sectionEl);
+      });
+
+      renderNavigationGrid();
+    }
+
+    function handleSingleSelect(qid, value) {
+      userAnswers[qid] = value;
+      updateQuestionBadge(qid, true);
+      updateTotalProgress();
+    }
+
+    function handleMultipleSelect(qid) {
+      const checkedEls = document.querySelectorAll(`input[name="q_${qid}"]:checked`);
+      const values = Array.from(checkedEls).map(el => el.value);
+      userAnswers[qid] = values;
+      updateQuestionBadge(qid, values.length > 0);
+      updateTotalProgress();
+    }
+
+    function handleTableSelect(qid, rowIdx, value) {
+      if (!userAnswers[qid] || typeof userAnswers[qid] !== "object" || Array.isArray(userAnswers[qid])) {
+        userAnswers[qid] = {};
+      }
+      userAnswers[qid][rowIdx] = value;
+
+      let qObj = findQuestionById(qid);
+      const isComplete = Object.keys(userAnswers[qid]).length === qObj.rows.length;
+      updateQuestionBadge(qid, isComplete);
+      updateTotalProgress();
+    }
+
+    function updateQuestionBadge(qid, isAnswered) {
+      const badge = document.getElementById(`badge_status_${qid}`);
+      const navBtn = document.getElementById(`navBtn_${qid}`);
+      if (badge) {
+        badge.textContent = isAnswered ? "✓ Terjawab" : "Belum dijawab";
+        badge.className = isAnswered ? "text-[11px] font-bold text-emerald-600" : "text-[11px] font-bold text-slate-400";
+      }
+      if (navBtn) {
+        if (isAnswered) {
+          navBtn.className = "w-full aspect-square flex items-center justify-center text-xs font-black rounded-xl border border-emerald-600 bg-emerald-600 text-white shadow-xs";
+        } else {
+          navBtn.className = "w-full aspect-square flex items-center justify-center text-xs font-black rounded-xl border border-slate-200 bg-slate-100 text-slate-700 shadow-xs";
+        }
+      }
+    }
+
+    function updateTotalProgress() {
+      let count = 0;
+      for (let i = 1; i <= 40; i++) {
+        const ans = userAnswers[i];
+        if (ans) {
+          if (Array.isArray(ans) && ans.length > 0) count++;
+          else if (typeof ans === "object" && !Array.isArray(ans)) {
+            let qObj = findQuestionById(i);
+            if (Object.keys(ans).length === qObj.rows.length) count++;
+          } else if (typeof ans === "string" && ans.trim() !== "") {
+            count++;
+          }
+        }
+      }
+      document.getElementById("answeredCount").textContent = count;
+      const pct = (count / 40) * 100;
+      document.getElementById("examProgressBar").style.width = `${pct}%`;
+    }
+
+    function renderNavigationGrid() {
+      const grid = document.getElementById("gridNumberButtons");
+      grid.innerHTML = "";
+      for (let i = 1; i <= 40; i++) {
+        const btn = document.createElement("button");
+        btn.id = `navBtn_${i}`;
+        btn.type = "button";
+        btn.textContent = i;
+        btn.className = "w-full aspect-square flex items-center justify-center text-xs font-black rounded-xl border border-slate-200 bg-slate-100 text-slate-700 shadow-xs";
+        btn.onclick = () => {
+          showQuickNavigation();
+          const target = document.getElementById(`qCard_${i}`);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.add("ring-4", "ring-blue-500/30");
+            setTimeout(() => target.classList.remove("ring-4", "ring-blue-500/30"), 1500);
+          }
+        };
+        grid.appendChild(btn);
+      }
+    }
+
+    function showQuickNavigation() {
+      const drawer = document.getElementById("questionGridDrawer");
+      drawer.classList.toggle("hidden");
+    }
+
+    function findQuestionById(qid) {
+      for (const tpKey in examData) {
+        const found = examData[tpKey].questions.find(q => q.id === qid);
+        if (found) return found;
+      }
+      return null;
+    }
+
+    function startExam() {
+      const nameInput = document.getElementById("studentName").value.trim();
+      const classInput = document.getElementById("studentClass").value;
+
+      if (!nameInput || !classInput) return;
+
+      student.name = nameInput;
+      student.class = classInput;
+
+      document.getElementById("badgeName").textContent = student.name;
+      document.getElementById("badgeClass").textContent = `Kelas ${student.class}`;
+      document.getElementById("studentInfoBadge").classList.remove("hidden");
+      document.getElementById("examProgressBarContainer").classList.remove("hidden");
+
+      document.getElementById("welcomeScreen").classList.add("hidden");
+      document.getElementById("examScreen").classList.remove("hidden");
+
+      renderAllQuestions();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function confirmSubmission() {
+      let count = 0;
+      for (let i = 1; i <= 40; i++) {
+        const ans = userAnswers[i];
+        if (ans) {
+          if (Array.isArray(ans) && ans.length > 0) count++;
+          else if (typeof ans === "object" && !Array.isArray(ans)) {
+            let qObj = findQuestionById(i);
+            if (Object.keys(ans).length === qObj.rows.length) count++;
+          } else if (typeof ans === "string" && ans.trim() !== "") {
+            count++;
+          }
+        }
+      }
+
+      const msg = document.getElementById("confirmMessage");
+      if (count < 40) {
+        msg.innerHTML = `Baru <strong>${count} dari 40 soal</strong> yang terjawab.<br><span class="text-rose-600 font-bold">Ada ${40 - count} soal belum dijawab.</span><br>Tetap ingin mengumpulkan?`;
+      } else {
+        msg.innerHTML = `Lengkap! Semua <strong>40 soal</strong> sudah dijawab.<br>Kumpulkan ujian sekarang?`;
+      }
+
+      document.getElementById("confirmModal").classList.remove("hidden");
+    }
+
+    function closeConfirmModal() {
+      document.getElementById("confirmModal").classList.add("hidden");
+    }
+
+    // PENGIRIMAN DATA HASIL KE GOOGLE SHEETS
+    async function sendResultToGoogleSheets(payload) {
+      const box = document.getElementById("sheetStatusBox");
+      const icon = document.getElementById("sheetStatusIcon");
+      const text = document.getElementById("sheetStatusText");
+
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("TEMPEL_URL")) {
+        box.className = "p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 bg-amber-50 border-amber-200 text-amber-800";
+        icon.className = "fa-solid fa-triangle-exclamation text-amber-600";
+        text.textContent = "Google Script URL belum disetel di kode script HTML.";
+        return;
+      }
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        box.className = "p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 bg-emerald-50 border-emerald-200 text-emerald-800";
+        icon.className = "fa-solid fa-circle-check text-emerald-600";
+        text.textContent = "Nilai Anda telah berhasil disimpan ke Google Sheets guru!";
+      } catch (err) {
+        box.className = "p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 bg-rose-50 border-rose-200 text-rose-800";
+        icon.className = "fa-solid fa-circle-xmark text-rose-600";
+        text.textContent = "Gagal mengirim ke Google Sheets. Periksa koneksi internet.";
+      }
+    }
+
+    function calculateAndDisplayResults() {
+      closeConfirmModal();
+
+      let totalScore = 0;
+      let tpScores = { tp1: 0, tp2: 0, tp3: 0, tp4: 0 };
+      const reviewList = [];
+
+      for (let qid = 1; qid <= 40; qid++) {
+        let qObj = null;
+        let parentTP = "";
+        for (const tpKey in examData) {
+          const f = examData[tpKey].questions.find(q => q.id === qid);
+          if (f) { qObj = f; parentTP = tpKey; break; }
+        }
+
+        const userAns = userAnswers[qid];
+        let qScore = 0;
+        let isCorrect = false;
+        let userDisplay = "";
+        let keyDisplay = "";
+
+        if (qObj.type === "single") {
+          keyDisplay = qObj.key;
+          userDisplay = userAns || "<i class='text-slate-400'>Kosong</i>";
+          if (userAns && userAns.trim() === qObj.key.trim()) {
+            qScore = 2;
+            isCorrect = true;
+          }
+        } else if (qObj.type === "multiple") {
+          keyDisplay = qObj.key.join(", ");
+          if (Array.isArray(userAns) && userAns.length > 0) {
+            userDisplay = userAns.join(", ");
+            const correctPicks = userAns.filter(val => qObj.key.includes(val)).length;
+            const wrongPicks = userAns.filter(val => !qObj.key.includes(val)).length;
+            if (correctPicks === qObj.key.length && wrongPicks === 0) {
+              qScore = 3;
+              isCorrect = true;
+            } else if (correctPicks > 0 && wrongPicks === 0) {
+              qScore = Number(((correctPicks / qObj.key.length) * 3).toFixed(2));
+            } else {
+              qScore = 0;
+            }
+          } else {
+            userDisplay = "<i class='text-slate-400'>Kosong</i>";
+            qScore = 0;
+          }
+        } else if (qObj.type === "table_tf" || qObj.type === "table_tf_with_image") {
+          let rowScore = 0;
+          let userRowSummary = [];
+          let keyRowSummary = [];
+          qObj.rows.forEach((r, rIdx) => {
+            const rowVal = userAns && userAns[rIdx] ? userAns[rIdx] : "Kosong";
+            userRowSummary.push(`${rIdx+1}:${rowVal}`);
+            keyRowSummary.push(`${rIdx+1}:${r.key}`);
+            if (rowVal === r.key) rowScore += 0.75;
+          });
+          qScore = Number(rowScore.toFixed(2));
+          isCorrect = (qScore === 3);
+          userDisplay = userRowSummary.join(" | ");
+          keyDisplay = keyRowSummary.join(" | ");
+        }
+
+        totalScore += qScore;
+        tpScores[parentTP] += qScore;
+
+        reviewList.push({
+          id: qid,
+          question: qObj.question.split("\n")[0],
+          userDisplay,
+          keyDisplay,
+          qScore,
+          isCorrect
+        });
+      }
+
+      const finalScoreRounded = Math.min(100, Math.round(totalScore * 10) / 10);
+
+      let predikat = "";
+      if (finalScoreRounded >= 90) predikat = "Sangat Memuaskan (A)";
+      else if (finalScoreRounded >= 80) predikat = "Memuaskan (B)";
+      else if (finalScoreRounded >= 75) predikat = "Cukup (C)";
+      else predikat = "Perlu Bimbingan (D)";
+
+      document.getElementById("finalScoreDisplay").textContent = finalScoreRounded;
+      document.getElementById("resStudentInfo").textContent = `${student.name} &bull; Kelas ${student.class} &bull; ${predikat}`;
+
+      const scoreTP1 = Math.round(tpScores.tp1 * 10) / 10;
+      const scoreTP2 = Math.round(tpScores.tp2 * 10) / 10;
+      const scoreTP3 = Math.round(tpScores.tp3 * 10) / 10;
+      const scoreTP4 = Math.round(tpScores.tp4 * 10) / 10;
+
+      document.getElementById("tp1Score").textContent = `${scoreTP1}/25`;
+      document.getElementById("tp2Score").textContent = `${scoreTP2}/25`;
+      document.getElementById("tp3Score").textContent = `${scoreTP3}/25`;
+      document.getElementById("tp4Score").textContent = `${scoreTP4}/25`;
+
+      const reviewContainer = document.getElementById("reviewDetailsContainer");
+      reviewContainer.innerHTML = "";
+
+      reviewList.forEach(rev => {
+        const item = document.createElement("div");
+        item.className = `p-3 rounded-xl border text-xs ${rev.isCorrect ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'}`;
+        item.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <strong class="text-slate-800">No. ${rev.id}</strong>
+            <span class="font-black ${rev.isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${rev.qScore} Poin</span>
+          </div>
+          <p class="text-slate-600 mb-1.5 truncate">${rev.question}</p>
+          <div><strong>Jawabanmu:</strong> <span class="${rev.isCorrect ? 'text-emerald-700 font-bold' : 'text-rose-700 font-bold'}">${rev.userDisplay}</span></div>
+          <div><strong>Kunci:</strong> <span class="text-blue-700 font-bold">${rev.keyDisplay}</span></div>
+        `;
+        reviewContainer.appendChild(item);
+      });
+
+      document.getElementById("resultModal").classList.remove("hidden");
+
+      // Kirim otomatis ke Google Sheets
+      sendResultToGoogleSheets({
+        nama: student.name,
+        kelas: student.class,
+        nilaiAkhir: finalScoreRounded,
+        tp1: scoreTP1,
+        tp2: scoreTP2,
+        tp3: scoreTP3,
+        tp4: scoreTP4,
+        predikat: predikat
+      });
+    }
+
+    function closeResultModal() {
+      document.getElementById("resultModal").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
