@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buku Pembahasan Guru: Asesmen Teks Prosedur Kelas 9</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800;900&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Fira Code"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .custom-scroll::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 8px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @media print {
+      header, #filterRibbon, .no-print {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      .page-break {
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP BAR GURU -->
+  <header class="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-400 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/20">
+          <i class="fa-solid fa-chalkboard-user"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-display font-black text-lg sm:text-xl tracking-tight text-white leading-tight">PEDOMAN GURU: BEDAH SOAL & KUNCI SUMATIF</h1>
+            <span class="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Lengkap 40 Butir</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Asesmen Sumatif Akhir Bab II: Teks Prosedur &bull; Bahasa Indonesia Kelas 9</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5 flex-wrap no-print">
+        <button onclick="window.print()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-2">
+          <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+        </button>
+        <button onclick="toggleAllExplanations()" id="toggleAllBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-extrabold transition shadow-md flex items-center gap-1.5">
+          <i class="fa-solid fa-arrows-up-down"></i> <span id="toggleAllLabel">Buka Semua Pembahasan</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- FILTER & NAVIGATION RIBBON -->
+  <div id="filterRibbon" class="bg-white border-b border-slate-200 shadow-xs sticky top-[69px] z-30 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+      
+      <!-- TP Filter Buttons -->
+      <div class="flex items-center gap-1.5 overflow-x-auto custom-scroll pb-1 sm:pb-0">
+        <span class="font-bold text-slate-400 uppercase tracking-wider text-[11px] mr-1">Tujuan:</span>
+        <button onclick="filterByTP('all')" id="btn-tp-all" class="tp-btn px-3 py-1.5 rounded-lg font-extrabold bg-blue-600 text-white transition">Semua TP (40)</button>
+        <button onclick="filterByTP('tp1')" id="btn-tp-tp1" class="tp-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">TP 1: Menyimak (1-10)</button>
+        <button onclick="filterByTP('tp2')" id="btn-tp-tp2" class="tp-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">TP 2: Membaca (11-20)</button>
+        <button onclick="filterByTP('tp3')" id="btn-tp-tp3" class="tp-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">TP 3: Berbicara (21-30)</button>
+        <button onclick="filterByTP('tp4')" id="btn-tp-tp4" class="tp-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">TP 4: Menulis (31-40)</button>
+      </div>
+
+      <!-- Quick Search & Type Filter -->
+      <div class="flex items-center gap-2">
+        <select id="typeFilter" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-700 text-xs focus:ring-2 focus:ring-blue-500">
+          <option value="all">Semua Tipe Soal</option>
+          <option value="single">Pilihan Ganda Tunggal (20)</option>
+          <option value="multiple">Pilihan Ganda Kompleks (12)</option>
+          <option value="table_tf">Tabel Benar/Salah (8)</option>
+        </select>
+        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari kata kunci butir..." class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-medium w-48 focus:ring-2 focus:ring-blue-500">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-8">
+    <div id="cardsContainer" class="space-y-6">
+      <!-- Injected via JavaScript -->
+    </div>
+  </main>
+
+  <script>
+    // ==========================================
+    // DATASET ASESMEN SUMATIF LENGKAP BESERTA
+    // BEDAH OPSI & RELEVANSI STIMULUS
+    // ==========================================
+    const TEACHER_DATABASE = [
+      // === TP 1: MENYIMAK (NOMOR 1 - 10) ===
+      {
+        id: 1,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menemukan informasi tersurat mengenai alat dan bahan pada infografik prosedur.",
+        level: "C1 / Mengingat (Faktual Tersurat)",
+        question: "Berdasarkan infografik, alat yang digunakan untuk membuat lubang pada bagian bawah botol adalah ....",
+        options: ["guntung", "spidol", "paku", "pisau"],
+        key: "paku",
+        explanation: {
+          mainConcept: "Pada infografik langkah ke-4 tertera teks instruksi eksplisit: 'Buat beberapa lubang kecil pada bagian bawah botol menggunakan paku'. Selain itu, di kotak 'Alat dan Bahan yang Diperlukan' terdapat gambar paku dengan keterangan 'Pembuat lubang'.",
+          optionAnalysis: [
+            { opt: "guntung", status: "SALAH", note: "Gunting (pada langkah 3) difungsikan untuk memotong badan botol mengikuti garis spidol, bukan untuk menusuk lubang drainase air." },
+            { opt: "spidol", status: "SALAH", note: "Spidol (pada langkah 2) difungsikan sebagai penanda pola garis melingkar di tengah botol." },
+            { opt: "paku", status: "BENAR", note: "Paku secara tersurat dinyatakan sebagai alat penusuk lubang pembuangan air di dasar botol." },
+            { opt: "pisau", status: "SALAH", note: "Pisau sama sekali tidak dicantumkan dalam daftar alat maupun langkah prosedur dalam infografik." }
+          ],
+          teacherTips: "Ingatkan siswa untuk membedakan fungsi alat pemotong (gunting) dengan alat pelubang drainase (paku)."
+        }
+      },
+      {
+        id: 2,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengidentifikasi rincian ukuran bahan spesifik yang tertera pada bagian alat dan bahan.",
+        level: "C1 / Mengingat (Identifikasi Ukuran)",
+        question: "Berapa ukuran botol plastik yang digunakan dalam prosedur tersebut?",
+        options: ["500 ml", "750 ml", "1 liter", "1,5 liter"],
+        key: "1,5 liter",
+        explanation: {
+          mainConcept: "Pada kolom Alat dan Bahan baris pertama, tercantum jelas: '1 Botol Plastik, Ukuran 1,5 Liter'.",
+          optionAnalysis: [
+            { opt: "500 ml", status: "SALAH", note: "Ukuran ini adalah ukuran botol air mineral kecil; volume media tanamnya tidak mencukupi untuk pertumbuhan akar." },
+            { opt: "750 ml", status: "SALAH", note: "Ukuran pengecoh yang tidak tercantum dalam infografik." },
+            { opt: "1 liter", status: "SALAH", note: "Angka pengecoh umum, bukan ukuran yang direkomendasikan pada poster." },
+            { opt: "1,5 liter", status: "BENAR", note: "Tersurat persis pada infografik sebagai ukuran botol yang ideal." }
+          ],
+          teacherTips: "Siswa sering terkecoh karena mengabaikan tulisan ukuran kecil di bawah label nama bahan."
+        }
+      },
+      {
+        id: 3,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menyeleksi seluruh komponen alat dan bahan yang relevan dalam satu infografik prosedur.",
+        level: "C2 / Memahami (Seleksi Multielemen)",
+        question: "Centang semua jawaban yang sesuai dengan informasi dalam infografik!\nAlat dan bahan yang diperlukan untuk membuat pot tanaman adalah ....",
+        options: [
+          "Botol plastik bekas",
+          "Gunting",
+          "Tanah",
+          "Bibit tanaman"
+        ],
+        key: ["Botol plastik bekas", "Gunting", "Tanah", "Bibit tanaman"],
+        explanation: {
+          mainConcept: "Keempat opsi tersebut merupakan komponen wajib yang tercantum lengkap pada kartu bahan: Botol plastik 1,5L, Gunting, Spidol, Paku, Tanah, dan Bibit Tanaman.",
+          optionAnalysis: [
+            { opt: "Botol plastik bekas", status: "BENAR", note: "Bahan wadah utama pot." },
+            { opt: "Gunting", status: "BENAR", note: "Alat pemotong botol." },
+            { opt: "Tanah", status: "BENAR", note: "Media tanam utama." },
+            { opt: "Bibit tanaman", status: "BENAR", note: "Material hidup yang ditanam." }
+          ],
+          teacherTips: "Pada tipe PG Kompleks ini, siswa wajib mencentang keempat kotak untuk memperoleh poin sempurna 3.0."
+        }
+      },
+      {
+        id: 4,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menyimpulkan fungsi logis dari langkah persiapan awal dalam teks prosedur.",
+        level: "C2 / Memahami (Kausalitas Langkah)",
+        question: "Mengapa botol harus dicuci dan dikeringkan sebelum digunakan?",
+        options: [
+          "Agar botol lebih mudah dipotong menggunakan gunting.",
+          "Agar botol memiliki ukuran yang sesuai untuk tanaman.",
+          "Agar botol siap digunakan sebagai wadah yang bersih.",
+          "Agar garis yang dibuat dengan spidol menjadi lebih panjang."
+        ],
+        key: "Agar botol siap digunakan sebagai wadah yang bersih.",
+        explanation: {
+          mainConcept: "Pencucian dan pengeringan bertujuan melarutkan sisa cairan minuman manis/kimia sebelumnya agar tidak membusuk atau meracuni media tanah bagi akar bibit.",
+          optionAnalysis: [
+            { opt: "Agar botol lebih mudah dipotong menggunakan gunting.", status: "SALAH", note: "Kebersihan botol tidak memengaruhi ketajaman gunting atau ketebalan plastik." },
+            { opt: "Agar botol memiliki ukuran yang sesuai untuk tanaman.", status: "SALAH", note: "Ukuran botol diatur saat pemotongan, bukan dari proses mencuci." },
+            { opt: "Agar botol siap digunakan sebagai wadah yang bersih.", status: "BENAR", note: "Tujuan logis tindakan pembersihan adalah higienitas wadah tanam." },
+            { opt: "Agar garis yang dibuat dengan spidol menjadi lebih panjang.", status: "SALAH", note: "Tidak ada hubungannya dengan panjang garis spidol." }
+          ],
+          teacherTips: "Arahkan siswa berpikir tentang dampak sisa cairan manis pada botol terhadap jamur dan semut tanah."
+        }
+      },
+      {
+        id: 5,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menganalisis hubungan kronologis dan ketergantungan antar-tahapan prosedur.",
+        level: "C4 / Menganalisis (Siklus Prosedural)",
+        question: "Centang semua pernyataan yang dapat disimpulkan dari urutan langkah dalam infografik!",
+        options: [
+          "Botol perlu dipotong sebelum digunakan sebagai wadah tanah.",
+          "Lubang dibuat agar bagian botol siap digunakan sebagai pot.",
+          "Bibit tanaman dimasukkan setelah tanah berada di dalam pot.",
+          "Tanah dimasukkan sebelum botol diberi garis."
+        ],
+        key: [
+          "Botol perlu dipotong sebelum digunakan sebagai wadah tanah.",
+          "Lubang dibuat agar bagian botol siap digunakan sebagai pot.",
+          "Bibit tanaman dimasukkan setelah tanah berada di dalam pot."
+        ],
+        explanation: {
+          mainConcept: "Urutan resmi: (1) Cuci & keringkan → (2) Garis spidol → (3) Potong → (4) Lubang paku → (5) Masukkan tanah → (6) Tanam bibit.",
+          optionAnalysis: [
+            { opt: "Botol perlu dipotong sebelum digunakan sebagai wadah tanah.", status: "BENAR", note: "Langkah 3 (potong) mendahului langkah 5 (isi tanah)." },
+            { opt: "Lubang dibuat agar bagian botol siap digunakan sebagai pot.", status: "BENAR", note: "Langkah 4 (lubang drainase) melengkapi wadah sebelum ditimbun tanah." },
+            { opt: "Bibit tanaman dimasukkan setelah tanah berada di dalam pot.", status: "BENAR", note: "Langkah 6 dilakukan setelah langkah 5 selesai." },
+            { opt: "Tanah dimasukkan sebelum botol diberi garis.", status: "SALAH", note: "Membalik urutan; jika diisi tanah sebelum digaris, pemotongan akan tumpah dan berantakan." }
+          ],
+          teacherTips: "Tekankan bahwa prosedur bersifat sekuensial (kronologis) dan memiliki ketergantungan logis antarlangkah."
+        }
+      },
+      {
+        id: 6,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "table_tf",
+        scoreWeight: "3 Poin",
+        competency: "Menilai keabsahan pernyataan mengenai konsekuensi perubahan urutan langkah dan fungsi materi.",
+        level: "C3 / Menerapkan (Verifikasi Prosedur)",
+        question: "Bacalah pernyataan berikut. Tentukan apakah pernyataan tersebut Benar atau Salah berdasarkan informasi dan urutan dalam infografik.",
+        rows: [
+          { text: "Jika tanah dimasukkan sebelum botol dipotong, prosedur tidak mengikuti urutan dalam infografik.", key: "Benar", reason: "Membalik tahapan langkah 3 dan 5 menyalahi urutan infografik." },
+          { text: "Bibit tanaman dapat dimasukkan sebelum tanah karena langkah tersebut tidak berpengaruh.", key: "Salah", reason: "Tanpa tanah di dasar, akar bibit tidak memiliki penopang dan nutrisi awal." },
+          { text: "Pemotongan botol dilakukan setelah garis dibuat dengan spidol.", key: "Benar", reason: "Langkah 2 (menandai) mendahului langkah 3 (memotong)." },
+          { text: "Botol yang kuat dipilih agar pot dapat digunakan lebih lama.", key: "Benar", reason: "Sesuai dengan kotak tips di bagian bawah poster." }
+        ],
+        key: ["Benar", "Salah", "Benar", "Benar"],
+        explanation: {
+          mainConcept: "Pernyataan menguji ketelitian siswa terhadap konsekuensi praktis jika urutan prosedur dilanggar serta rujukan kotak tips.",
+          optionAnalysis: [],
+          teacherTips: "Ingatkan siswa bahwa opsi ke-2 melanggar hukum biologis penanaman tanaman (tanah sebagai fondasi akar)."
+        }
+      },
+      {
+        id: 7,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengevaluasi kesalahan urutan kerja pada prosedur pembuatan karya.",
+        level: "C5 / Mengevaluasi (Troubleshooting)",
+        question: "Seorang siswa mengubah urutan prosedur menjadi sebagai berikut:\nMencuci botol → membuat garis → memotong botol → memasukkan tanah → membuat lubang → menanam bibit.\nEvaluasi yang paling tepat terhadap perubahan tersebut adalah ....",
+        options: [
+          "tepat, karena lubang dapat dibuat setelah tanah dimasukkan",
+          "tepat, karena urutan langkah dalam prosedur dapat dilakukan secara bebas",
+          "kurang tepat, karena lubang seharusnya dibuat sebelum tanah dimasukkan",
+          "kurang tepat, karena bibit seharusnya ditanam sebelum botol dipotong"
+        ],
+        key: "kurang tepat, karena lubang seharusnya dibuat sebelum tanah dimasukkan",
+        explanation: {
+          mainConcept: "Jika lubang dibuat setelah tanah dimasukkan, tanah basah akan menutupi dasar botol dan paku sulit menembus plastik tanpa menumpahkan tanah atau membahayakan tangan.",
+          optionAnalysis: [
+            { opt: "tepat, karena lubang dapat dibuat setelah tanah dimasukkan", status: "SALAH", note: "Menimbulkan kendala teknis dan tanah tumpah/menutup lubang." },
+            { opt: "tepat, karena urutan langkah dalam prosedur dapat dilakukan secara bebas", status: "SALAH", note: "Prosedur protokol/pembuatan tidak dapat diacak seenaknya." },
+            { opt: "kurang tepat, karena lubang seharusnya dibuat sebelum tanah dimasukkan", status: "BENAR", note: "Evaluasi logis: dasar botol harus dilubangi saat masih kosong agar bersih dan aman." },
+            { opt: "kurang tepat, karena bibit seharusnya ditanam sebelum botol dipotong", status: "SALAH", note: "Tidak mungkin menanam bibit pada botol utuh yang belum dipotong bagian lehernya." }
+          ],
+          teacherTips: "Gunakan pendekatan analogi praktis: melubangi ember berisi tanah basah akan mengotori lantai dan menusuk tangan."
+        }
+      },
+      {
+        id: 8,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Mengidentifikasi keunggulan format infografik dibandingkan teks prosedur prosa linier.",
+        level: "C4 / Menganalisis (Fitur Tipografi & Visual)",
+        question: "Centang semua pernyataan yang menunjukkan kelebihan penyajian prosedur dalam bentuk infografik tersebut!",
+        options: [
+          "Langkah-langkah disusun menggunakan nomor secara berurutan.",
+          "Setiap langkah dilengkapi ilustrasi yang sesuai dengan kegiatan.",
+          "Informasi alat dan bahan ditempatkan sebelum langkah-langkah.",
+          "Semua informasi disajikan dalam paragraf panjang tanpa gambar."
+        ],
+        key: [
+          "Langkah-langkah disusun menggunakan nomor secara berurutan.",
+          "Setiap langkah dilengkapi ilustrasi yang sesuai dengan kegiatan.",
+          "Informasi alat dan bahan ditempatkan sebelum langkah-langkah."
+        ],
+        explanation: {
+          mainConcept: "Kelebihan utama infografik mencakup: nomor urut pemandu mata, ikon/ilustrasi kontekstual, dan penataan hierarki informasi (alat bahan di atas, langkah di tengah, tips di bawah).",
+          optionAnalysis: [
+            { opt: "Langkah-langkah disusun menggunakan nomor secara berurutan.", status: "BENAR", note: "Penomoran 1-6 memandu pembaca secara runtut." },
+            { opt: "Setiap langkah dilengkapi ilustrasi yang sesuai dengan kegiatan.", status: "BENAR", note: "Ikon gunting, paku, spidol memperjelas tindakan fisik." },
+            { opt: "Informasi alat dan bahan ditempatkan sebelum langkah-langkah.", status: "BENAR", note: "Mempermudah persiapan awal sebelum eksekusi." },
+            { opt: "Semua informasi disajikan dalam paragraf panjang tanpa gambar.", status: "SALAH", note: "Bertolak belakang dengan format infografik yang ringkas dan visual." }
+          ],
+          teacherTips: "Ajak siswa membandingkan poster infografik dengan teks resep manual hitam-putih di koran."
+        }
+      },
+      {
+        id: 9,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "table_tf",
+        scoreWeight: "3 Poin",
+        competency: "Menilai efektivitas komponen penyusun tata letak infografik.",
+        level: "C4 / Menganalisis (Desain Instruksional)",
+        question: "Perhatikan pernyataan berikut tentang efektivitas infografik.",
+        rows: [
+          { text: "Penggunaan gambar membantu pembaca memahami kegiatan pada setiap langkah.", key: "Benar", reason: "Gambar/ikon memperjelas instruksi kerja bagi pembaca visual." },
+          { text: "Penomoran 1–6 membantu pembaca mengetahui urutan pembuatan pot.", key: "Benar", reason: "Angka berfungsi sebagai hierarki navigasi membaca langkah." },
+          { text: "Informasi alat dan bahan tidak diperlukan karena pembaca dapat langsung mengikuti gambar.", key: "Salah", reason: "Tanpa daftar alat bahan, pembaca tidak tahu ukuran spesifik (misal: botol 1,5L)." },
+          { text: "Bagian tips memberikan informasi tambahan tentang pemilihan botol.", key: "Benar", reason: "Kotak tips di bagian bawah memuat petunjuk ketahanan bahan botol." }
+        ],
+        key: ["Benar", "Salah", "Benar", "Benar"],
+        explanation: {
+          mainConcept: "Infografik prosedur yang baik menggabungkan elemen visual (ikon), teks terstruktur (langkah bernomor), dan informasi pendukung (tips daya tahan).",
+          optionAnalysis: [],
+          teacherTips: "Tekankan bahwa daftar alat dan bahan tetap merupakan bagian wajib dalam teks prosedur genre apapun."
+        }
+      },
+      {
+        id: 10,
+        tp: "tp1",
+        tpTitle: "TP 1. Menyimak & Memirsa Infografik Prosedur",
+        stimulusRef: "Infografik: 'Cara Membuat Pot Tanaman Dari Botol Plastik Bekas'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menyimpulkan daya tarik persuasif dan manfaat praktis infografik bagi pembaca.",
+        level: "C5 / Mengevaluasi (Dampak Teks)",
+        question: "Centang semua pernyataan yang menunjukkan bahwa infografik tersebut menarik dan bermanfaat bagi pembaca!",
+        options: [
+          "Menggunakan gambar untuk memperjelas setiap tahapan.",
+          "Informasi disajikan secara singkat dan berurutan.",
+          "Mengajak pembaca memanfaatkan botol plastik bekas menjadi benda berguna",
+          "Berisi hiasan sehingga langkah-langkah tidak diperlukan untuk dipahami."
+        ],
+        key: [
+          "Menggunakan gambar untuk memperjelas setiap tahapan.",
+          "Informasi disajikan secara singkat dan berurutan.",
+          "Mengajak pembaca memanfaatkan botol plastik bekas menjadi benda berguna"
+        ],
+        explanation: {
+          mainConcept: "Daya tarik teks terletak pada aspek estetika visual yang ringkas dan aspek pragmatis (gerakan daur ulang sampah plastik ramah lingkungan).",
+          optionAnalysis: [
+            { opt: "Menggunakan gambar untuk memperjelas setiap tahapan.", status: "BENAR", note: "Meningkatkan daya tarik visual." },
+            { opt: "Informasi disajikan secara singkat dan berurutan.", status: "BENAR", note: "Mencegah kejenuhan membaca paragraf panjang." },
+            { opt: "Mengajak pembaca memanfaatkan botol plastik bekas menjadi benda berguna", status: "BENAR", note: "Memberikan dampak kebermanfaatan nyata bagi lingkungan." },
+            { opt: "Berisi hiasan sehingga langkah-langkah tidak diperlukan untuk dipahami.", status: "SALAH", note: "Desain infografik bukan sekadar ornamen hiasan, melainkan media penyampai pesan fungsional." }
+          ],
+          teacherTips: "Kaitkan soal ini dengan Proyek Penguatan Profil Pelajar Pancasila (P5) tema Gaya Hidup Berkelanjutan."
+        }
+      },
+
+      // === TP 2: MEMBACA & MEMIRSA (NOMOR 11 - 20) ===
+      {
+        id: 11,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman' (Raka & Dimas)",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengidentifikasi kosakata teknis bidang pertanian/bercocok tanam dalam teks.",
+        level: "C1 / Mengingat (Leksikon Khusus)",
+        question: "Kata yang termasuk kata sulit dalam teks dan berkaitan langsung dengan kegiatan menumbuhkan tanaman adalah ....",
+        options: ["persemaian", "gudang", "kemasan", "permukaan"],
+        key: "persemaian",
+        explanation: {
+          mainConcept: "Persemaian (dari kata dasar semai) adalah istilah teknis agronomi untuk tempat atau wadah menyemaikan benih sebelum dipindahkan ke lahan permanen.",
+          optionAnalysis: [
+            { opt: "persemaian", status: "BENAR", note: "Istilah teknis spesifik budidaya tanaman." },
+            { opt: "gudang", status: "SALAH", note: "Kosakata umum tempat penyimpanan benda/perabot." },
+            { opt: "kemasan", status: "SALAH", note: "Kosakata umum untuk wadah/pembungkus produk." },
+            { opt: "permukaan", status: "SALAH", note: "Kosakata spasial umum yang menunjukkan bidang terluar suatu benda." }
+          ],
+          teacherTips: "Latih siswa memeriksa KBBI untuk kata-kata bentukan dengan imbuhan per-...-an dalam bidang biologi/pertanian."
+        }
+      },
+      {
+        id: 12,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menentukan makna leksikal/kontekstual kata kerja pada paragraf kedua.",
+        level: "C2 / Memahami (Makna Kontekstual)",
+        question: "Makna kata menggenang pada paragraf kedua adalah ....",
+        options: [
+          "mengalir dengan cepat menuju tempat rendah",
+          "terkumpul pada suatu tempat dan tidak segera mengalir",
+          "meresap secara perlahan ke dalam lapisan tanah",
+          "menyebar secara merata ke seluruh permukaan"
+        ],
+        key: "terkumpul pada suatu tempat dan tidak segera mengalir",
+        explanation: {
+          mainConcept: "Dalam kalimat '...melubangi bagian bawah kotak agar air tidak menggenang', kata menggenang merujuk pada kondisi cairan yang terhenti dan tertahan di suatu cekungan.",
+          optionAnalysis: [
+            { opt: "mengalir dengan cepat menuju tempat rendah", status: "SALAH", note: "Ini adalah arti kata 'mengucur' atau 'mengalir deras'." },
+            { opt: "terkumpul pada suatu tempat dan tidak segera mengalir", status: "BENAR", note: "Sesuai definisi KBBI: berhenti mengalir dan berkumpul di suatu tempat." },
+            { opt: "meresap secara perlahan ke dalam lapisan tanah", status: "SALAH", note: "Ini adalah arti kata 'merembes' atau 'menginfiltrasi'." },
+            { opt: "menyebar secara merata ke seluruh permukaan", status: "SALAH", note: "Ini adalah arti kata 'merata' atau 'meluap'." }
+          ],
+          teacherTips: "Jelaskan hubungan antara air menggenang dengan pembusukan akar tanaman (busuk akar karena ketiadaan aerasi oksigen)."
+        }
+      },
+      {
+        id: 13,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menjelaskan makna kata kerja fisik dalam konteks perlakuan terhadap media tanam.",
+        level: "C2 / Memahami (Semantik Kata Kerja)",
+        question: "Kata mengikis pada paragraf ketiga memiliki makna ....",
+        options: [
+          "membuat sesuatu menjadi lebih padat dan kuat",
+          "mengurangi atau menghilangkan bagian secara perlahan",
+          "mencampurkan beberapa bahan agar menjadi merata",
+          "memindahkan sesuatu dari tempat awal menuju tempat lain"
+        ],
+        key: "mengurangi atau menghilangkan bagian secara perlahan",
+        explanation: {
+          mainConcept: "Dalam kalimat '...agar tidak mengikis media tanam', kata mengikis berarti aliran air yang terlalu keras dapat menghanyutkan butiran lapisan tanah atas (erosi permukaan).",
+          optionAnalysis: [
+            { opt: "membuat sesuatu menjadi lebih padat dan kuat", status: "SALAH", note: "Ini makna dari kata 'memadatkan'." },
+            { opt: "mengurangi atau menghilangkan bagian secara perlahan", status: "BENAR", note: "Sesuai definisi mengikis: mengauskan/menghilangkan sedikit demi sedikit lapisan permukaan." },
+            { opt: "mencampurkan beberapa bahan agar menjadi merata", status: "SALAH", note: "Ini makna dari kata 'mengaduk' atau 'mengoplos'." },
+            { opt: "memindahkan sesuatu dari tempat awal menuju tempat lain", status: "SALAH", note: "Ini makna umum dari kata 'merelokasi' atau 'mengangkut'." }
+          ],
+          teacherTips: "Bimbing siswa memahami fenomena erosi tanah skala mikro saat menyiram pot dengan gayung vs semprotan halus."
+        }
+      },
+      {
+        id: 14,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengidentifikasi alasan kausalitas tindakan prosedural dalam cerita.",
+        level: "C2 / Memahami (Tujuan Tindakan)",
+        question: "Berdasarkan konteks cerita, alasan Raka melubangi bagian bawah kotak adalah ....",
+        options: [
+          "agar udara dapat masuk ke dalam media tanam",
+          "agar tanah menjadi lebih ringan setelah disiram",
+          "agar biji memperoleh cahaya matahari secara langsung",
+          "agar kelebihan air dapat keluar dari kotak"
+        ],
+        key: "agar kelebihan air dapat keluar dari kotak",
+        explanation: {
+          mainConcept: "Teks menyatakan: 'Raka melubangi bagian bawah kotak agar air tidak menggenang'. Artinya, lubang bawah berfungsi sebagai saluran pembuangan kelebihan air siraman.",
+          optionAnalysis: [
+            { opt: "agar udara dapat masuk ke dalam media tanam", status: "SALAH", note: "Udara masuk terutama melalui pori-pori tanah bagian atas, bukan tujuan utama lubang dasar kotak." },
+            { opt: "agar tanah menjadi lebih ringan setelah disiram", status: "SALAH", note: "Berat tanah tidak menjadi alasan utama pembuatan drainase dalam berkebun." },
+            { opt: "agar biji memperoleh cahaya matahari secara langsung", status: "SALAH", note: "Cahaya matahari didapat dari posisi peletakan kotak di tempat terbuka, bukan dari dasar kotak." },
+            { opt: "agar kelebihan air dapat keluar dari kotak", status: "BENAR", note: "Kelebihan air harus keluar agar akar tidak terendam dan membusuk." }
+          ],
+          teacherTips: "Kaitkan istilah 'lubang drainase' yang sering muncul pada pot tanaman komersial."
+        }
+      },
+      {
+        id: 15,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menentukan definisi operasional istilah persemaian berdasarkan konteks narasi.",
+        level: "C2 / Memahami (Definisi Kontekstual)",
+        question: "Makna kata persemaian dalam teks dapat dipahami sebagai ....",
+        options: [
+          "tempat untuk menyimpan berbagai peralatan berkebun",
+          "tempat untuk mencampurkan tanah dengan bahan organik",
+          "tempat untuk menumbuhkan tanaman dari biji atau bibit",
+          "tempat untuk meletakkan tanaman sebelum dipindahkan"
+        ],
+        key: "tempat untuk menumbuhkan tanaman dari biji atau bibit",
+        explanation: {
+          mainConcept: "Konteks kalimat paragraf 1: '...membuat persemaian sederhana untuk menumbuhkan bibit tanaman'.",
+          optionAnalysis: [
+            { opt: "tempat untuk menyimpan berbagai peralatan berkebun", status: "SALAH", note: "Itu adalah fungsi gudang penyimpanan alat." },
+            { opt: "tempat untuk mencampurkan tanah dengan bahan organik", status: "SALAH", note: "Itu adalah proses peracikan media tanam." },
+            { opt: "tempat untuk menumbuhkan tanaman dari biji atau bibit", status: "BENAR", note: "Definisi tepat dari wadah/media persemaian." },
+            { opt: "tempat untuk meletakkan tanaman sebelum dipindahkan", status: "SALAH", note: "Terlalu umum dan mengabaikan fungsi pertumbuhan dari fase biji." }
+          ],
+          teacherTips: "Tunjukkan bahwa kata semai selalu berpasangan dengan biji/benih yang baru mulai berkecambah."
+        }
+      },
+      {
+        id: 16,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menganalisis pergeseran makna akibat substitusi kata sinonim dalam kalimat prosedur.",
+        level: "C4 / Menganalisis (Nuansa Makna Diksi)",
+        question: "Jika kata mengikis pada kalimat tersebut diganti dengan kata menghanyutkan, perubahan makna yang paling mungkin terjadi adalah ....",
+        options: [
+          "air dianggap menyebabkan media tanam terbawa aliran",
+          "air dianggap membuat media tanam menjadi lebih lembap",
+          "air dianggap membantu biji tumbuh lebih cepat dan merata",
+          "air dianggap membuat permukaan media menjadi lebih padat"
+        ],
+        key: "air dianggap menyebabkan media tanam terbawa aliran",
+        explanation: {
+          mainConcept: "Kata 'menghanyutkan' berakar dari kata 'hanyut' (terbawa arus air mengalir), sedangkan 'mengikis' menekankan pada kerusakan lapis demi lapis akibat gesekan air.",
+          optionAnalysis: [
+            { opt: "air dianggap menyebabkan media tanam terbawa aliran", status: "BENAR", note: "Menghanyutkan berarti partikel tanah ikut terbawa hanyut bersama limpasan air." },
+            { opt: "air dianggap membuat media tanam menjadi lebih lembap", status: "SALAH", note: "Kelembapan tanah berkaitan dengan kata 'membasahi', bukan menghanyutkan." },
+            { opt: "air dianggap membantu biji tumbuh lebih cepat dan merata", status: "SALAH", note: "Menghanyutkan justru merusak persemaian karena biji ikut tersapu air." },
+            { opt: "air dianggap membuat permukaan media menjadi lebih padat", status: "SALAH", note: "Kepadatan media tidak digambarkan oleh kata menghanyutkan." }
+          ],
+          teacherTips: "Bahas perbedaan nuansa kata antara erosi (mengikis) dan transportasi sedimen (menghanyutkan)."
+        }
+      },
+      {
+        id: 17,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menyeleksi deskripsi makna kata kontekstual yang valid dari beberapa sudut pandang.",
+        level: "C3 / Menerapkan (Eksplorasi Semantik)",
+        question: "Pernyataan beberapa jawaban menunjukkan makna kata menggenang berdasarkan konteks teks adalah ....",
+        options: [
+          "Air tertahan pada bagian tertentu dan belum mengalir keluar.",
+          "Air terkumpul pada suatu tempat dalam jumlah tertentu.",
+          "Air bergerak melalui lubang menuju bagian luar kotak.",
+          "Air menyebar ke seluruh bagian tanah secara perlahan."
+        ],
+        key: [
+          "Air tertahan pada bagian tertentu dan belum mengalir keluar.",
+          "Air terkumpul pada suatu tempat dalam jumlah tertentu."
+        ],
+        explanation: {
+          mainConcept: "Kondisi menggenang dicirikan oleh dua parameter: (1) tertahan/tidak bergerak mengalir dan (2) menumpuk/terkumpul di suatu permukaan cekung.",
+          optionAnalysis: [
+            { opt: "Air tertahan pada bagian tertentu dan belum mengalir keluar.", status: "BENAR", note: "Karakteristik statis cairan yang tidak terbuang." },
+            { opt: "Air terkumpul pada suatu tempat dalam jumlah tertentu.", status: "BENAR", note: "Karakteristik akumulasi volume cairan." },
+            { opt: "Air bergerak melalui lubang menuju bagian luar kotak.", status: "SALAH", note: "Ini adalah proses mengalir atau menetes keluar." },
+            { opt: "Air menyebar ke seluruh bagian tanah secara perlahan.", status: "SALAH", note: "Ini adalah proses peresapan (infiltrasi) kapiler tanah." }
+          ],
+          teacherTips: "Ingatkan siswa bahwa kata 'menggenang' memiliki konotasi statis (diam tak mengalir)."
+        }
+      },
+      {
+        id: 18,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menganalisis penggunaan istilah bidang dalam teks narasi prosedural.",
+        level: "C3 / Menerapkan (Konteks Istilah)",
+        question: "Pernyataan yang tepat tentang kata persemaian berdasarkan penggunaannya dalam teks adalah ....",
+        options: [
+          "Berkaitan dengan kegiatan awal untuk menumbuhkan tanaman.",
+          "Digunakan untuk menyebut tempat menumbuhkan biji tanaman.",
+          "Merujuk pada tempat penyimpanan alat dan bahan berkebun.",
+          "Berkaitan dengan kegiatan merawat tanaman yang telah dipanen."
+        ],
+        key: [
+          "Berkaitan dengan kegiatan awal untuk menumbuhkan tanaman.",
+          "Digunakan untuk menyebut tempat menumbuhkan biji tanaman."
+        ],
+        explanation: {
+          mainConcept: "Persemaian adalah fase perlakuan dini pada siklus bercocok tanam (khusus biji/benih), bukan fase pascapanen atau fungsi gudang perkakas.",
+          optionAnalysis: [
+            { opt: "Berkaitan dengan kegiatan awal untuk menumbuhkan tanaman.", status: "BENAR", note: "Menyemai adalah fase paling awal budidaya tanaman." },
+            { opt: "Digunakan untuk menyebut tempat menumbuhkan biji tanaman.", status: "BENAR", note: "Kotak kayu difungsikan sebagai bedengan/wadah semai." },
+            { opt: "Merujuk pada tempat penyimpanan alat dan bahan berkebun.", status: "SALAH", note: "Peralatan disimpan di gudang, bukan di persemaian." },
+            { opt: "Berkaitan dengan kegiatan merawat tanaman yang telah dipanen.", status: "SALAH", note: "Setelah panen bukan lagi persemaian, melainkan penanganan pascapanen." }
+          ],
+          teacherTips: "Tekankan siklus bercocok tanam: Persemaian (Biji) → Pembibitan → Penanaman di Lahan → Perawatan → Pemanenan."
+        }
+      },
+      {
+        id: 19,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Mengevaluasi kebenaran klaim analisis diksi teknis yang digunakan penulis.",
+        level: "C4 / Menganalisis (Evaluasi Diksi)",
+        question: "Raka menggunakan beberapa kata yang berkaitan dengan kegiatan bercocok tanam. Pernyataan yang menunjukkan pemahaman terhadap penggunaan kata tersebut dalam teks adalah ....",
+        options: [
+          "Kata persemaian memperjelas kegiatan awal sebelum tanaman tumbuh.",
+          "Kata menggenang menjelaskan keadaan air yang tidak segera mengalir.",
+          "Kata mengikis menunjukkan bahwa air harus diberikan dalam jumlah berlebihan.",
+          "Kata kemasan menunjukkan tempat khusus untuk menyimpan bibit tanaman."
+        ],
+        key: [
+          "Kata persemaian memperjelas kegiatan awal sebelum tanaman tumbuh.",
+          "Kata menggenang menjelaskan keadaan air yang tidak segera mengalir."
+        ],
+        explanation: {
+          mainConcept: "Dua pernyataan pertama merefleksikan pemahaman akurat terhadap istilah persemaian dan menggenang dalam cerita.",
+          optionAnalysis: [
+            { opt: "Kata persemaian memperjelas kegiatan awal sebelum tanaman tumbuh.", status: "BENAR", note: "Sesuai konteks cerita paragraf 1." },
+            { opt: "Kata menggenang menjelaskan keadaan air yang tidak segera mengalir.", status: "BENAR", note: "Sesuai konteks cerita paragraf 2." },
+            { opt: "Kata mengikis menunjukkan bahwa air harus diberikan dalam jumlah berlebihan.", status: "SALAH", note: "Mengikis adalah dampak negatif yang justru harus dicegah dengan menyiram air secukupnya." },
+            { opt: "Kata kemasan menunjukkan tempat khusus untuk menyimpan bibit tanaman.", status: "SALAH", note: "Kemasan dalam teks adalah bungkus plastik pabrik dari biji cabai, bukan tempat menanam bibit." }
+          ],
+          teacherTips: "Bimbing siswa membaca secara cermat frasa 'menyiram dengan air secukupnya agar tidak mengikis'."
+        }
+      },
+      {
+        id: 20,
+        tp: "tp2",
+        tpTitle: "TP 2. Membaca & Memirsa Teks Cerita Prosedural",
+        stimulusRef: "Cerita Prosedural: 'Kotak Kayu di Sudut Taman'",
+        type: "table_tf",
+        scoreWeight: "3 Poin",
+        competency: "Memvalidasi pemahaman fungsi istilah teknis dalam membangun alur cerita prosedural.",
+        level: "C3 / Menerapkan (Validasi Pemahaman)",
+        question: "Tentukan apakah setiap pernyataan berikut Benar (B) atau Salah (S) berdasarkan teks.",
+        rows: [
+          { text: "Makna kata persemaian dapat dipahami melalui konteks kegiatan menumbuhkan bibit tanaman.", key: "Benar", reason: "Paragraf 1 menghubungkan persemaian dengan kegiatan menumbuhkan bibit cabai." },
+          { text: "Kata menggenang digunakan untuk menggambarkan air yang terkumpul dan tidak segera mengalir.", key: "Benar", reason: "Paragraf 2 menyebutkan lubang bawah dibuat agar air tidak tergenang." },
+          { text: "Kata mengikis dalam teks menunjukkan kegiatan menambah tanah agar media tanam semakin tebal.", key: "Salah", reason: "Mengikis bermakna menghilangkan/mengikis lapisan tanah, bukan menambah ketebalannya." },
+          { text: "Penggunaan kata-kata tersebut membantu pembaca memahami langkah yang dilakukan Raka dan Dimas.", key: "Benar", reason: "Kosakata teknis memperjelas prosedur berkebun yang disisipkan dalam narasi." }
+        ],
+        key: ["Benar", "Salah", "Benar", "Benar"],
+        explanation: {
+          mainConcept: "Pernyataan menguji ketepatan definisi kata teknis dan perannya dalam memperkuat kejelasan instruksi berkebun dalam cerita.",
+          optionAnalysis: [],
+          teacherTips: "Tunjukkan bahwa teks cerita prosedural adalah fusi antara teks narasi fiksi dan teks prosedur instruksional."
+        }
+      },
+
+      // === TP 3: BERBICARA & MEMPRESENTASIKAN (NOMOR 21 - 30) ===
+      {
+        id: 21,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda' (Kelompok Dira)",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengidentifikasi tahapan pra-wawancara (persiapan) dalam prosedur jurnalistik.",
+        level: "C1 / Mengingat (Identifikasi Tahapan)",
+        question: "Informasi yang menunjukkan kegiatan pra-wawancara dalam teks adalah ....",
+        options: [
+          "Dira menyusun pertanyaan dan membuat janji dengan narasumber.",
+          "Dira mengajukan pertanyaan dan memperhatikan jawaban narasumber.",
+          "Dira mengucapkan terima kasih dan meminta foto bersama narasumber.",
+          "Dira memeriksa rekaman dan menyusun bagian video hasil wawancara."
+        ],
+        key: "Dira menyusun pertanyaan dan membuat janji dengan narasumber.",
+        explanation: {
+          mainConcept: "Pra-wawancara adalah fase persiapan sebelum hari-H temu narasumber. Paragraf 2 menyatakan: 'Sehari sebelum wawancara... menentukan topik, menyusun pertanyaan... membuat janji'.",
+          optionAnalysis: [
+            { opt: "Dira menyusun pertanyaan dan membuat janji dengan narasumber.", status: "BENAR", note: "Kegiatan yang dilakukan sehari sebelum pelaksanaan (tahap pra-wawancara)." },
+            { opt: "Dira mengajukan pertanyaan dan memperhatikan jawaban narasumber.", status: "SALAH", note: "Ini adalah tahap pelaksanaan wawancara." },
+            { opt: "Dira mengucapkan terima kasih dan meminta foto bersama narasumber.", status: "SALAH", note: "Ini adalah tahap penutupan pelaksanaan wawancara." },
+            { opt: "Dira memeriksa rekaman dan menyusun bagian video hasil wawancara.", status: "SALAH", note: "Ini adalah tahap pascawawancara (editing dan produksi)." }
+          ],
+          teacherTips: "Jelaskan skema 3 babak wawancara: Pra-wawancara (Persiapan) → Pelaksanaan → Pascawawancara (Penyuntingan)."
+        }
+      },
+      {
+        id: 22,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menjelaskan pertimbangan teknis dalam pemilihan lokasi rekaman wawancara.",
+        level: "C2 / Memahami (Kaidah Teknis Audio)",
+        question: "Alasan kelompok Dira memilih tempat yang tidak terlalu bising adalah ....",
+        options: [
+          "agar wajah narasumber terlihat jelas selama proses wawancara",
+          "agar suara percakapan dapat terdengar dengan jelas dalam rekaman",
+          "agar kelompok dapat menyelesaikan wawancara dalam waktu singkat",
+          "agar narasumber dapat menjawab pertanyaan dengan lebih lengkap"
+        ],
+        key: "agar suara percakapan dapat terdengar dengan jelas dalam rekaman",
+        explanation: {
+          mainConcept: "Paragraf 2 kalimat terakhir menyatakan: 'Kelompok itu memilih tempat yang tidak terlalu bising agar suara terdengar jelas'.",
+          optionAnalysis: [
+            { opt: "agar wajah narasumber terlihat jelas selama proses wawancara", status: "SALAH", note: "Kejelasan wajah dipengaruhi oleh tata pencahayaan (lighting), bukan kebisingan." },
+            { opt: "agar suara percakapan dapat terdengar dengan jelas dalam rekaman", status: "BENAR", note: "Kebisingan lingkungan (noise) secara langsung merusak kualitas mikrofon perekam gawai." },
+            { opt: "agar kelompok dapat menyelesaikan wawancara dalam waktu singkat", status: "SALAH", note: "Durasi wawancara ditentukan oleh jumlah daftar pertanyaan, bukan kebisingan tempat." },
+            { opt: "agar narasumber dapat menjawab pertanyaan dengan lebih lengkap", status: "SALAH", note: "Kelengkapan jawaban narasumber bergantung pada keahlian menyusun pertanyaan pemantik." }
+          ],
+          teacherTips: "Hubungkan dengan praktik membuat vlog wawancara di sekolah yang sering gagal karena suara angin atau gaduh kantin."
+        }
+      },
+      {
+        id: 23,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengidentifikasi etika kesantunan berbahasa pada pembukaan sesi wawancara.",
+        level: "C1 / Mengingat (Etika Wawancara)",
+        question: "Tindakan yang dilakukan Dira sebelum mulai mengajukan pertanyaan adalah ....",
+        options: [
+          "memeriksa hasil rekaman dan menyusun bagian penutup video",
+          "meminta foto bersama dan menyampaikan kesimpulan wawancara",
+          "mengucapkan salam, memperkenalkan diri, dan meminta izin merekam",
+          "menentukan durasi video dan memilih tempat untuk menyimpan rekaman"
+        ],
+        key: "mengucapkan salam, memperkenalkan diri, dan meminta izin merekam",
+        explanation: {
+          mainConcept: "Paragraf 3 kalimat 1: 'Saat wawancara dimulai, Dira mengucapkan salam, memperkenalkan diri dan kelompoknya, kemudian meminta izin untuk merekam'.",
+          optionAnalysis: [
+            { opt: "memeriksa hasil rekaman dan menyusun bagian penutup video", status: "SALAH", note: "Dilakukan setelah wawancara usai." },
+            { opt: "meminta foto bersama dan menyampaikan kesimpulan wawancara", status: "SALAH", note: "Etika penutup di akhir wawancara." },
+            { opt: "mengucapkan salam, memperkenalkan diri, dan meminta izin merekam", status: "BENAR", note: "Tersurat persis sebagai etika baku pembuka wawancara jurnalistik." },
+            { opt: "menentukan durasi video dan memilih tempat untuk menyimpan rekaman", status: "SALAH", note: "Dilakukan saat rapat pra-wawancara dan pascawawancara." }
+          ],
+          teacherTips: "Tekankan pentingnya meminta izin merekam (consent) sebagai etika hukum dan privasi narasumber."
+        }
+      },
+      {
+        id: 24,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menginterpretasikan bahasa tubuh (komunikasi nonverbal) dalam interaksi lisan.",
+        level: "C2 / Memahami (Komunikasi Nonverbal)",
+        question: "Perilaku Dira yang melakukan kontak mata dan sesekali mengangguk menunjukkan bahwa ia ....",
+        options: [
+          "berusaha menunjukkan bahwa wawancara harus segera diselesaikan",
+          "berusaha menerapkan sikap mendengarkan secara aktif",
+          "berusaha mengubah jawaban narasumber sesuai pertanyaannya",
+          "berusaha mengurangi jumlah pertanyaan selama wawancara"
+        ],
+        key: "berusaha menerapkan sikap mendengarkan secara aktif",
+        explanation: {
+          mainConcept: "Kontak mata dan anggukan kepala adalah gestur universal komunikasi nonverbal yang menandakan active listening (menyimak aktif dengan penuh perhatian dan penghargaan).",
+          optionAnalysis: [
+            { opt: "berusaha menunjukkan bahwa wawancara harus segera diselesaikan", status: "SALAH", note: "Gestur terburu-buru biasanya melihat jam tangan atau memotong ucapan." },
+            { opt: "berusaha menerapkan sikap mendengarkan secara aktif", status: "BENAR", note: "Ciri khas pewawancara profesional yang menghargai narasumber." },
+            { opt: "berusaha mengubah jawaban narasumber sesuai pertanyaannya", status: "SALAH", note: "Pewawancara tidak boleh memanipulasi atau mendikte jawaban." },
+            { opt: "berusaha mengurangi jumlah pertanyaan selama wawancara", status: "SALAH", note: "Anggukan kepala tidak bertujuan membatasi pertanyaan." }
+          ],
+          teacherTips: "Ajak siswa mempraktikkan active listening saat teman berbicara di depan kelas (tidak menatap layar HP atau mengobrol)."
+        }
+      },
+      {
+        id: 25,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menganalisis dampak pengabaian prosedur penyusunan daftar pertanyaan pada hasil wawancara.",
+        level: "C4 / Menganalisis (Kausalitas Prosedur)",
+        question: "Jika kelompok Dira langsung merekam tanpa menyusun pertanyaan terlebih dahulu, dampak yang paling mungkin terjadi adalah ....",
+        options: [
+          "isi wawancara berpotensi kurang terarah dan informasi penting terlewat",
+          "durasi wawancara berpotensi menjadi lebih singkat dan mudah disunting",
+          "narasumber berpotensi memberikan jawaban lebih panjang daripada biasanya",
+          "kualitas gambar berpotensi menjadi lebih baik karena proses lebih spontan"
+        ],
+        key: "isi wawancara berpotensi kurang terarah dan informasi penting terlewat",
+        explanation: {
+          mainConcept: "Penyusunan pertanyaan (daftar pedoman wawancara berpedoman ADIKSIMBA) berfungsi sebagai pemandu agar pembicaraan tidak melebar ke mana-mana dan seluruh data penting terjaring.",
+          optionAnalysis: [
+            { opt: "isi wawancara berpotensi kurang terarah dan informasi penting terlewat", status: "BENAR", note: "Dampak logis dari ketiadaan panduan wawancara terstruktur." },
+            { opt: "durasi wawancara berpotensi menjadi lebih singkat dan mudah disunting", status: "SALAH", note: "Tanpa panduan, wawancara justru sering bertele-tele dan menyulitkan proses editing." },
+            { opt: "narasumber berpotensi memberikan jawaban lebih panjang daripada biasanya", status: "SALAH", note: "Jawaban narasumber bergantung pada kejelasan pertanyaan yang diajukan." },
+            { opt: "kualitas gambar berpotensi menjadi lebih baik karena proses lebih spontan", status: "SALAH", note: "Kualitas gambar murni ditentukan oleh kamera dan pencahayaan, bukan ketiadaan teks." }
+          ],
+          teacherTips: "Kaitkan dengan pentingnya 'Interview Protocol' pada pekerjaan wartawan dan peneliti."
+        }
+      },
+      {
+        id: 26,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengidentifikasi klasifikasi fungsi kata tanya dalam rumus ADIKSIMBA (5W+1H).",
+        level: "C2 / Memahami (Klasifikasi Pertanyaan)",
+        question: "Pertanyaan tentang cara mengurangi penggunaan plastik di kantin termasuk pertanyaan “bagaimana” karena ....",
+        options: [
+          "meminta narasumber menyebutkan waktu berlangsungnya kegiatan",
+          "meminta narasumber menjelaskan cara melakukan suatu kegiatan",
+          "meminta narasumber menyebutkan orang yang terlibat dalam kegiatan",
+          "meminta narasumber menjelaskan alasan terjadinya suatu kegiatan"
+        ],
+        key: "meminta narasumber menjelaskan cara melakukan suatu kegiatan",
+        explanation: {
+          mainConcept: "Rumus ADIKSIMBA: Apa (peristiwa), Di mana (tempat), Kapan (waktu), Siapa (pelaku), Mengapa (alasan/kausalitas), Bagaimana (cara/tahapan/proses).",
+          optionAnalysis: [
+            { opt: "meminta narasumber menyebutkan waktu berlangsungnya kegiatan", status: "SALAH", note: "Ini fungsi kata tanya 'Kapan'." },
+            { opt: "meminta narasumber menjelaskan cara melakukan suatu kegiatan", status: "BENAR", note: "Fungsi kata tanya 'Bagaimana' (How) adalah menanyakan proses atau metode." },
+            { opt: "meminta narasumber menyebutkan orang yang terlibat dalam kegiatan", status: "SALAH", note: "Ini fungsi kata tanya 'Siapa'." },
+            { opt: "meminta narasumber menjelaskan alasan terjadinya suatu kegiatan", status: "SALAH", note: "Ini fungsi kata tanya 'Mengapa'." }
+          ],
+          teacherTips: "Kaitkan langsung dengan materi Teks Prosedur: teks prosedur pada dasarnya adalah jawaban atas pertanyaan 'Bagaimana cara...?'"
+        }
+      },
+      {
+        id: 27,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Memilih seluruh butir kegiatan yang termasuk ke dalam fase pra-wawancara.",
+        level: "C3 / Menerapkan (Kategorisasi Tahapan)",
+        question: "Tindakan yang termasuk tahap pra-wawancara berdasarkan teks adalah ....",
+        options: [
+          "Menentukan topik wawancara bersama anggota kelompok.",
+          "Menyusun pertanyaan berdasarkan unsur ADIKSIMBA.",
+          "Meminta izin kepada narasumber sebelum mulai merekam.",
+          "Memeriksa gawai yang akan digunakan untuk merekam."
+        ],
+        key: [
+          "Menentukan topik wawancara bersama anggota kelompok.",
+          "Menyusun pertanyaan berdasarkan unsur ADIKSIMBA.",
+          "Memeriksa gawai yang akan digunakan untuk merekam."
+        ],
+        explanation: {
+          mainConcept: "Tiga butir persiapan di paragraf 2: menentukan topik, menyusun draf ADIKSIMBA, dan memeriksa perangkat gawai perekam.",
+          optionAnalysis: [
+            { opt: "Menentukan topik wawancara bersama anggota kelompok.", status: "BENAR", note: "Tahap awal pra-wawancara." },
+            { opt: "Menyusun pertanyaan berdasarkan unsur ADIKSIMBA.", status: "BENAR", note: "Tahap pembuatan draf instrumen pra-wawancara." },
+            { opt: "Meminta izin kepada narasumber sebelum mulai merekam.", status: "SALAH", note: "Ini dilakukan pada hari-H saat wawancara dimulai (tahap pelaksanaan)." },
+            { opt: "Memeriksa gawai yang akan digunakan untuk merekam.", status: "BENAR", note: "Pemeriksaan teknis peralatan pra-wawancara." }
+          ],
+          teacherTips: "Waspadai opsi ke-3; meminta izin dilakukan saat sudah berhadapan dengan narasumber sebelum kamera merekam."
+        }
+      },
+      {
+        id: 28,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menentukan perilaku dan kesantunan berbahasa pada pelaksanaan wawancara langsung.",
+        level: "C3 / Menerapkan (Sikap Pelaksanaan)",
+        question: "Pernyataan yang sesuai dengan prosedur pelaksanaan wawancara dalam teks adalah ....",
+        options: [
+          "Pewawancara menggunakan bahasa yang santun ketika bertanya.",
+          "Pewawancara mengajukan pertanyaan secara berurutan kepada narasumber.",
+          "Pewawancara mengabaikan jawaban narasumber agar wawancara lebih cepat.",
+          "Pewawancara menunjukkan perhatian melalui kontak mata dan anggukan."
+        ],
+        key: [
+          "Pewawancara menggunakan bahasa yang santun ketika bertanya.",
+          "Pewawancara mengajukan pertanyaan secara berurutan kepada narasumber.",
+          "Pewawancara menunjukkan perhatian melalui kontak mata dan anggukan."
+        ],
+        explanation: {
+          mainConcept: "Paragraf 3 memuat etika pelaksanaan: bahasa santun, alur pertanyaan berurutan, serta kontak mata dan anggukan kepala.",
+          optionAnalysis: [
+            { opt: "Pewawancara menggunakan bahasa yang santun ketika bertanya.", status: "BENAR", note: "Tersurat di paragraf 3." },
+            { opt: "Pewawancara mengajukan pertanyaan secara berurutan kepada narasumber.", status: "BENAR", note: "Menjaga benang merah dialog." },
+            { opt: "Pewawancara mengabaikan jawaban narasumber agar wawancara lebih cepat.", status: "SALAH", note: "Pelanggaran etika berat dalam wawancara." },
+            { opt: "Pewawancara menunjukkan perhatian melalui kontak mata dan anggukan.", status: "BENAR", note: "Wujud menyimak aktif yang santun." }
+          ],
+          teacherTips: "Gunakan panduan ini untuk rubrik penilaian praktik berbicara siswa di depan kelas."
+        }
+      },
+      {
+        id: 29,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menganalisis langkah-langkah penyusunan struktur video wawancara hasil rekaman.",
+        level: "C4 / Menganalisis (Produksi Video)",
+        question: "Kelompok Dira ingin menghasilkan video wawancara yang sesuai dengan prosedur. Tindakan yang tepat untuk dilakukan adalah....",
+        options: [
+          "Memastikan video memiliki pembuka, isi, dan penutup yang jelas.",
+          "Memeriksa durasi video agar sesuai dengan ketentuan tugas.",
+          "Menghilangkan seluruh bagian tanya jawab agar video lebih singkat.",
+          "Menyusun hasil rekaman setelah seluruh proses wawancara selesai."
+        ],
+        key: [
+          "Memastikan video memiliki pembuka, isi, dan penutup yang jelas.",
+          "Memeriksa durasi video agar sesuai dengan ketentuan tugas.",
+          "Menyusun hasil rekaman setelah seluruh proses wawancara selesai."
+        ],
+        explanation: {
+          mainConcept: "Paragraf 4 menjabarkan struktur video: Pembuka (salam, topik, narasumber) → Isi (tanya jawab) → Penutup (kesimpulan) dengan batasan durasi 2-3 menit.",
+          optionAnalysis: [
+            { opt: "Memastikan video memiliki pembuka, isi, dan penutup yang jelas.", status: "BENAR", note: "Struktur wajib video dokumenter/wawancara." },
+            { opt: "Memeriksa durasi video agar sesuai dengan ketentuan tugas.", status: "BENAR", note: "Harus memenuhi kriteria 2 sampai 3 menit." },
+            { opt: "Menghilangkan seluruh bagian tanya jawab agar video lebih singkat.", status: "SALAH", note: "Tanya jawab adalah bagian isi paling inti dari rekaman wawancara." },
+            { opt: "Menyusun hasil rekaman setelah seluruh proses wawancara selesai.", status: "BENAR", note: "Fase pascaproduksi dilakukan setelah seluruh footage selesai direkam." }
+          ],
+          teacherTips: "Ingatkan siswa pada rubrik penilaian konten video: kelengkapan struktur dan kedisiplinan durasi."
+        }
+      },
+      {
+        id: 30,
+        tp: "tp3",
+        tpTitle: "TP 3. Berbicara & Mempresentasikan Prosedur Wawancara",
+        stimulusRef: "Teks Prosedur Wawancara: 'Misi Jurnalis Muda'",
+        type: "table_tf",
+        scoreWeight: "3 Poin",
+        competency: "Memvalidasi pernyataan tentang prinsip wawancara dan penyuntingan video.",
+        level: "C3 / Menerapkan (Validasi Kaidah)",
+        question: "Berdasarkan teks, tentukan apakah pernyataan berikut Benar (B) atau Salah (S).",
+        rows: [
+          { text: "Penyusunan pertanyaan sebelum wawancara membantu pewawancara menjaga arah pembicaraan.", key: "Benar", reason: "Daftar pertanyaan menjaga fokus topik wawancara." },
+          { text: "Meminta izin merekam merupakan bagian dari sikap yang perlu diperhatikan ketika memulai wawancara.", key: "Benar", reason: "Mencerminkan etika kesantunan dan persetujuan narasumber." },
+          { text: "Bagian isi video sebaiknya digunakan untuk memperkenalkan topik dan narasumber kepada penonton.", key: "Salah", reason: "Perkenalan topik dan narasumber diletakkan pada bagian pembuka, bukan bagian isi." },
+          { text: "Memeriksa durasi video merupakan salah satu langkah untuk memastikan hasil praktik sesuai ketentuan tugas.", key: "Benar", reason: "Memastikan video mematuhi kriteria durasi antara 2 hingga 3 menit." }
+        ],
+        key: ["Benar", "Salah", "Benar", "Benar"],
+        explanation: {
+          mainConcept: "Baris ketiga salah karena perkenalan narasumber dan topik merupakan fungsi mutlak dari Bagian Pembuka, sedangkan Bagian Isi dialokasikan untuk substansi tanya jawab.",
+          optionAnalysis: [],
+          teacherTips: "Ulas kembali pembagian anatomi video: Pembuka (Introduction) - Isi (Q&A Body) - Penutup (Closing & Conclusion)."
+        }
+      },
+
+      // === TP 4: MENULIS (NOMOR 31 - 40) ===
+      {
+        id: 31,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menentukan gagasan utama (ide pokok) teks esai argumentatif bertema prosedur lingkungan.",
+        level: "C2 / Memahami (Ide Pokok)",
+        question: "Gagasan utama yang dikemukakan penulis dalam esai tersebut adalah ....",
+        options: [
+          "Pemanfaatan barang bekas perlu dibiasakan dalam kegiatan sekolah.",
+          "Pembuatan pot tanaman dapat dilakukan menggunakan botol plastik bekas.",
+          "Perawatan tanaman membutuhkan informasi yang diperoleh melalui komputer.",
+          "Kegiatan lingkungan dapat dilakukan murid melalui pengalaman secara langsung."
+        ],
+        key: "Pemanfaatan barang bekas perlu dibiasakan dalam kegiatan sekolah.",
+        explanation: {
+          mainConcept: "Kalimat pertama paragraf 1 menyatakan tesis utama: 'Pemanfaatan barang bekas perlu dibiasakan di lingkungan sekolah', yang dipertegas kembali pada simpulan di paragraf akhir.",
+          optionAnalysis: [
+            { opt: "Pemanfaatan barang bekas perlu dibiasakan dalam kegiatan sekolah.", status: "BENAR", note: "Ide pokok payung yang menaungi seluruh isi paragraf esai." },
+            { opt: "Pembuatan pot tanaman dapat dilakukan menggunakan botol plastik bekas.", status: "SALAH", note: "Hanya contoh pengalaman pribadi di paragraf 3 (gagasan penjelas)." },
+            { opt: "Perawatan tanaman membutuhkan informasi yang diperoleh melalui komputer.", status: "SALAH", note: "Rincian teknis pendukung di paragraf 3." },
+            { opt: "Kegiatan lingkungan dapat dilakukan murid melalui pengalaman secara langsung.", status: "SALAH", note: "Gagasan pendukung pada paragraf 4, bukan topik umum." }
+          ],
+          teacherTips: "Ajak siswa membedakan gagasan umum (payung teks) dengan gagasan khusus (ilustrasi/contoh pengalaman)."
+        }
+      },
+      {
+        id: 32,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menganalisis fungsi retoris paragraf kedua dalam struktur esai.",
+        level: "C4 / Menganalisis (Fungsi Paragraf)",
+        question: "Paragraf kedua dalam esai tersebut berfungsi untuk ....",
+        options: [
+          "memperkenalkan topik dan menyampaikan pendapat penulis",
+          "memberikan alasan yang mendukung gagasan yang dikemukakan",
+          "menceritakan pengalaman penulis ketika melakukan kegiatan lingkungan",
+          "menegaskan kembali gagasan melalui simpulan yang disampaikan penulis"
+        ],
+        key: "memberikan alasan yang mendukung gagasan yang dikemukakan",
+        explanation: {
+          mainConcept: "Paragraf 2 dibuka dengan: 'Salah satu alasan kegiatan tersebut penting adalah karena barang bekas masih dapat memiliki fungsi baru...'. Ini adalah tubuh argumen pendukung gagasan.",
+          optionAnalysis: [
+            { opt: "memperkenalkan topik dan menyampaikan pendapat penulis", status: "SALAH", note: "Fungsi paragraf 1 (pendahuluan/tesis)." },
+            { opt: "memberikan alasan yang mendukung gagasan yang dikemukakan", status: "BENAR", note: "Fungsi paragraf 2 yang menyajikan alasan logis (argumen)." },
+            { opt: "menceritakan pengalaman penulis ketika melakukan kegiatan lingkungan", status: "SALAH", note: "Fungsi paragraf 3 (naratif/prosedur empiris)." },
+            { opt: "menegaskan kembali gagasan melalui simpulan yang disampaikan penulis", status: "SALAH", note: "Fungsi paragraf 4 (penutup/reiterasi)." }
+          ],
+          teacherTips: "Bimbing siswa mengenali struktur esai: Tesis (P1) → Argumen/Alasan (P2) → Bukti/Contoh Nyata (P3) → Penegasan Ulang (P4)."
+        }
+      },
+      {
+        id: 33,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengidentifikasi kosakata serapan bahasa asing yang telah disesuaikan ke dalam bahasa Indonesia.",
+        level: "C2 / Memahami (Kata Serapan)",
+        question: "Kata yang termasuk kosakata serapan dan digunakan dalam esai tersebut adalah ....",
+        options: [
+          "barang, jumlah, dan tanah",
+          "kegiatan, sekolah, dan tanaman",
+          "aktivitas, informasi, dan komputer",
+          "lingkungan, kebiasaan, dan pengalaman"
+        ],
+        key: "aktivitas, informasi, dan komputer",
+        explanation: {
+          mainConcept: "Kata serapan adalah kata dari bahasa asing yang ejaan dan lafalnya disesuaikan dengan kaidah bahasa Indonesia: aktivitas (activity), informasi (information), komputer (computer).",
+          optionAnalysis: [
+            { opt: "barang, jumlah, dan tanah", status: "SALAH", note: "Bukan kelompok kata serapan bahasa Inggris modern." },
+            { opt: "kegiatan, sekolah, dan tanaman", status: "SALAH", note: "Kegiatan dan tanaman adalah kata dasar asli Melayu dengan imbuhan." },
+            { opt: "aktivitas, informasi, dan komputer", status: "BENAR", note: "Ketiganya adalah kata serapan baku dari bahasa Inggris." },
+            { opt: "lingkungan, kebiasaan, dan pengalaman", status: "SALAH", note: "Kata turunan asli bahasa Indonesia dengan konfiks peng-...-an dan ke-...-an." }
+          ],
+          teacherTips: "Ingatkan penyesuaian akhiran serapan: -ity menjadi -itas (activity → aktivitas) dan -tion menjadi -si (information → informasi)."
+        }
+      },
+      {
+        id: 34,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Menjelaskan fungsi ilustrasi pengalaman empiris dalam memperkuat teks esai.",
+        level: "C2 / Memahami (Fungsi Ilustrasi Bukti)",
+        question: "Mengapa pengalaman membuat pot tanaman digunakan penulis dalam bagian isi esai?",
+        options: [
+          "Untuk menunjukkan contoh yang mendukung gagasan tentang pemanfaatan barang bekas.",
+          "Untuk menjelaskan seluruh kegiatan yang pernah dilakukan penulis bersama temannya.",
+          "Untuk memperkenalkan alat dan bahan yang dapat digunakan dalam kegiatan lingkungan.",
+          "Untuk menunjukkan bahwa pembuatan pot merupakan kegiatan utama yang harus dilakukan sekolah."
+        ],
+        key: "Untuk menunjukkan contoh yang mendukung gagasan tentang pemanfaatan barang bekas.",
+        explanation: {
+          mainConcept: "Dalam penulisan esai, pengalaman nyata diposisikan sebagai 'evidence' atau bukti empiris konkret untuk mendukung klaim bahwa barang bekas dapat disulap menjadi benda berdaya guna.",
+          optionAnalysis: [
+            { opt: "Untuk menunjukkan contoh yang mendukung gagasan tentang pemanfaatan barang bekas.", status: "BENAR", note: "Fungsi retoris bukti konkret penguat argumen." },
+            { opt: "Untuk menjelaskan seluruh kegiatan yang pernah dilakukan penulis bersama temannya.", status: "SALAH", note: "Esai bukan buku harian pribadi yang mendata seluruh riwayat hidup penulis." },
+            { opt: "Untuk memperkenalkan alat dan bahan yang dapat digunakan dalam kegiatan lingkungan.", status: "SALAH", note: "Fokus esai pada gagasannya, bukan inventarisasi alat berkebun." },
+            { opt: "Untuk menunjukkan bahwa pembuatan pot merupakan kegiatan utama yang harus dilakukan sekolah.", status: "SALAH", note: "Pembuatan pot hanyalah salah satu contoh dari sekian banyak pemanfaatan limbah." }
+          ],
+          teacherTips: "Tekankan rumus paragraf argumen: Pernyataan Argumen (Claim) + Alasan (Reason) + Contoh/Bukti Nyata (Evidence)."
+        }
+      },
+      {
+        id: 35,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Mengonversi paragraf narasi pengalaman menjadi urutan langkah teks prosedur baku.",
+        level: "C3 / Menerapkan (Konversi Bentuk Teks)",
+        question: "Jika pengalaman pada paragraf ketiga diubah menjadi teks prosedur, urutan langkah yang paling tepat adalah ....",
+        options: [
+          "mencuci botol → memotong botol → membuat lubang → memasukkan tanah → menanam bibit",
+          "memotong botol → mencuci botol → menanam bibit → membuat lubang → memasukkan tanah",
+          "membuat lubang → memasukkan tanah → mencuci botol → memotong botol → menanam bibit",
+          "memasukkan tanah → membuat lubang → menanam bibit → mencuci botol → memotong botol"
+        ],
+        key: "mencuci botol → memotong botol → membuat lubang → memasukkan tanah → menanam bibit",
+        explanation: {
+          mainConcept: "Paragraf 3 secara berurutan memuat urutan: 'mencuci botol... mengeringkan... memotong bagian tengah... membuat beberapa lubang kecil... memasukkan tanah... menanam bibit'.",
+          optionAnalysis: [
+            { opt: "mencuci botol → memotong botol → membuat lubang → memasukkan tanah → menanam bibit", status: "BENAR", note: "Urutan sekuensial yang runtut dan logis." },
+            { opt: "memotong botol → mencuci botol → menanam bibit → membuat lubang → memasukkan tanah", status: "SALAH", note: "Bibit tidak mungkin ditanam sebelum tanah dimasukkan." },
+            { opt: "membuat lubang → memasukkan tanah → mencuci botol → memotong botol → menanam bibit", status: "SALAH", note: "Tanah dimasukkan sebelum botol dipotong adalah langkah keliru." },
+            { opt: "memasukkan tanah → membuat lubang → menanam bibit → mencuci botol → memotong botol", status: "SALAH", note: "Urutan kerja terbalik total." }
+          ],
+          teacherTips: "Latih siswa menyaring kata-kata penanda urutan seperti 'setelah itu', 'kemudian', dan 'lalu' saat mengubah narasi ke teks prosedur."
+        }
+      },
+      {
+        id: 36,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "single",
+        scoreWeight: "2 Poin",
+        competency: "Merumuskan judul poster prosedur yang operasional, menarik, dan informatif.",
+        level: "C4 / Menganalisis (Formulasi Judul Prosedur)",
+        question: "Judul yang paling tepat apabila pengalaman pada paragraf ketiga dikembangkan menjadi poster prosedur adalah ....",
+        options: [
+          "Manfaat Pemanfaatan Barang Bekas bagi Lingkungan Sekolah",
+          "Pengalaman Murid Membuat Pot Tanaman di Lingkungan Sekolah",
+          "Cara Membuat Pot Tanaman dari Botol Plastik Bekas",
+          "Pentingnya Kreativitas Murid dalam Menjaga Lingkungan Sekolah"
+        ],
+        key: "Cara Membuat Pot Tanaman dari Botol Plastik Bekas",
+        explanation: {
+          mainConcept: "Judul teks prosedur wajib mencerminkan tujuan petunjuk kerja langsung (how-to-do/how-to-make), diawali frasa 'Cara Membuat / Cara Melakukan', bukan judul esai opini.",
+          optionAnalysis: [
+            { opt: "Manfaat Pemanfaatan Barang Bekas bagi Lingkungan Sekolah", status: "SALAH", note: "Ini adalah judul untuk artikel/esai eksposisi manfaat." },
+            { opt: "Pengalaman Murid Membuat Pot Tanaman di Lingkungan Sekolah", status: "SALAH", note: "Ini adalah judul untuk teks narasi/cerita pengalaman." },
+            { opt: "Cara Membuat Pot Tanaman dari Botol Plastik Bekas", status: "BENAR", note: "Judul ideal teks prosedur (menjelaskan kegiatan dan bahan spesifik)." },
+            { opt: "Pentingnya Kreativitas Murid dalam Menjaga Lingkungan Sekolah", status: "SALAH", note: "Ini adalah judul untuk artikel opini atau pidato." }
+          ],
+          teacherTips: "Beri penegasan bahwa judul teks prosedur harus lugas dan langsung menyebutkan produk akhir yang akan dibuat."
+        }
+      },
+      {
+        id: 37,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menganalisis asal-usul etimologi kata serapan bahasa Inggris pada stimulus.",
+        level: "C4 / Menganalisis (Etimologi Kata)",
+        question: "Pernyataan yang tepat mengenai kosakata serapan dalam stimulus adalah ....",
+        options: [
+          "Kata komputer merupakan bentuk yang telah disesuaikan dari kata computer.",
+          "Kata aktivitas merupakan bentuk yang telah disesuaikan dari kata activity.",
+          "Kata informasi merupakan bentuk yang telah disesuaikan dari kata information.",
+          "Kata lingkungan merupakan bentuk yang telah disesuaikan dari kata environment."
+        ],
+        key: [
+          "Kata komputer merupakan bentuk yang telah disesuaikan dari kata computer.",
+          "Kata aktivitas merupakan bentuk yang telah disesuaikan dari kata activity.",
+          "Kata informasi merupakan bentuk yang telah disesuaikan dari kata information."
+        ],
+        explanation: {
+          mainConcept: "Kata serapan adaptasi disesuaikan kaidah ortografi: computer → komputer, activity → aktivitas, information → informasi. Kata 'lingkungan' adalah kata asli bentukan lokal, bukan kata serapan (environment adalah padanan terjemahan, bukan penyerapan bentuk).",
+          optionAnalysis: [
+            { opt: "Kata komputer merupakan bentuk yang telah disesuaikan dari kata computer.", status: "BENAR", note: "Penyerapan fonik dan ortografi c/ou → k/u." },
+            { opt: "Kata aktivitas merupakan bentuk yang telah disesuaikan dari kata activity.", status: "BENAR", note: "Penyerapan morfem akhir -ity → -itas." },
+            { opt: "Kata informasi merupakan bentuk yang telah disesuaikan dari kata information.", status: "BENAR", note: "Penyerapan morfem akhir -tion → -si." },
+            { opt: "Kata lingkungan merupakan bentuk yang telah disesuaikan dari kata environment.", status: "SALAH", note: "Environment tidak diserap bunyinya menjadi lingkungan; itu adalah proses terjemahan konsep, bukan penyerapan kata." }
+          ],
+          teacherTips: "Bimbing siswa membedakan antara Kata Serapan (Adopsi/Adaptasi fonetik) dengan Penerjemahan Istilah Asing."
+        }
+      },
+      {
+        id: 38,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menentukan komponen struktur baku yang wajib ada dalam teks prosedur.",
+        level: "C3 / Menerapkan (Struktur Teks Prosedur)",
+        question: "Apabila pengalaman pada paragraf ketiga diubah menjadi teks prosedur, informasi yang perlu dimasukkan adalah ....",
+        options: [
+          "Tujuan kegiatan yang menjelaskan hasil yang akan dibuat.",
+          "Alat dan bahan yang diperlukan untuk melakukan kegiatan.",
+          "Langkah kegiatan yang disusun sesuai urutan pelaksanaannya.",
+          "Perasaan penulis setelah berhasil melakukan kegiatan tersebut."
+        ],
+        key: [
+          "Tujuan kegiatan yang menjelaskan hasil yang akan dibuat.",
+          "Alat dan bahan yang diperlukan untuk melakukan kegiatan.",
+          "Langkah kegiatan yang disusun sesuai urutan pelaksanaannya."
+        ],
+        explanation: {
+          mainConcept: "Tiga anatomi struktur baku teks prosedur instruksional adalah: (1) Tujuan, (2) Alat dan Bahan, serta (3) Langkah-langkah kerja yang berurutan. Perasaan pribadi merupakan ciri teks ekspresif/diary, bukan teks prosedur objektif.",
+          optionAnalysis: [
+            { opt: "Tujuan kegiatan yang menjelaskan hasil yang akan dibuat.", status: "BENAR", note: "Struktur pembuka teks prosedur." },
+            { opt: "Alat dan bahan yang diperlukan untuk melakukan kegiatan.", status: "BENAR", note: "Struktur material teks prosedur." },
+            { opt: "Langkah kegiatan yang disusun sesuai urutan pelaksanaannya.", status: "BENAR", note: "Struktur tahapan tindakan." },
+            { opt: "Perasaan penulis setelah berhasil melakukan kegiatan tersebut.", status: "SALAH", note: "Teks prosedur bersifat objektif dan instruktif, bukan narasi curahan hati." }
+          ],
+          teacherTips: "Ulas kembali ciri kebahasaan teks prosedur yang bersifat objektif, jelas, dan menghindari bahasa emotif subjektif."
+        }
+      },
+      {
+        id: 39,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai: 'Membiasakan Pemanfaatan Barang Bekas di Sekolah'",
+        type: "multiple",
+        scoreWeight: "3 Poin",
+        competency: "Menganalisis prinsip desain grafis dan tipografi pada media poster prosedur infografik.",
+        level: "C4 / Menganalisis (Komposisi Poster)",
+        question: "Agar pengalaman tersebut dapat dikembangkan menjadi poster prosedur yang informatif dan mudah dipahami, unsur yang sebaiknya digunakan adalah ....",
+        options: [
+          "Judul yang menggambarkan kegiatan yang akan dilakukan.",
+          "Langkah-langkah yang disusun secara runtut dan jelas.",
+          "Gambar atau ilustrasi yang sesuai dengan isi langkah.",
+          "Uraian panjang mengenai pendapat pribadi penulis tentang sampah."
+        ],
+        key: [
+          "Judul yang menggambarkan kegiatan yang akan dilakukan.",
+          "Langkah-langkah yang disusun secara runtut dan jelas.",
+          "Gambar atau ilustrasi yang sesuai dengan isi langkah."
+        ],
+        explanation: {
+          mainConcept: "Poster prosedur mengutamakan prinsip keterbacaan cepat (quick read): judul mencolok, langkah bernomor ringkas, dan ilustrasi visual pendukung. Paragraf panjang akan membuat poster menjadi padat dan diabaikan orang.",
+          optionAnalysis: [
+            { opt: "Judul yang menggambarkan kegiatan yang akan dilakukan.", status: "BENAR", note: "Menarik perhatian awal pembaca." },
+            { opt: "Langkah-langkah yang disusun secara runtut dan jelas.", status: "BENAR", note: "Inti panduan kerja yang mudah dieksekusi." },
+            { opt: "Gambar atau ilustrasi yang sesuai dengan isi langkah.", status: "BENAR", note: "Mempermudah pembaca visual memahami instruksi." },
+            { opt: "Uraian panjang mengenai pendapat pribadi penulis tentang sampah.", status: "SALAH", note: "Membuat poster terlalu padat teks dan menyimpang dari fungsi petunjuk teknis." }
+          ],
+          teacherTips: "Tekankan slogan desain infografik: 'A picture is worth a thousand words'—hindari paragraf tebal pada poster."
+        }
+      },
+      {
+        id: 40,
+        tp: "tp4",
+        tpTitle: "TP 4. Menulis Teks Prosedur & Esai Lingkungan",
+        stimulusRef: "Esai Pemanfaatan Sampah & Poster Stimulus: 'Cara Membuat Kompos Sederhana'",
+        type: "table_tf_with_image",
+        scoreWeight: "3 Poin",
+        competency: "Memvalidasi jenis genre teks multimodal serta keterkaitan antara bukti empiris dan simpulan esai.",
+        level: "C4 / Menganalisis (Sintesis Multimodal)",
+        question: "Berdasarkan struktur esai dan isi stimulus (termasuk poster prosedur kompos di bawah ini), tentukan Benar (B) atau Salah (S) pada setiap pernyataan berikut.",
+        rows: [
+          { text: "Gambar tersebut termasuk dalam kategori poster prosedur.", key: "Benar", reason: "Gambar menampilkan panduan bernomor 1-6 dengan judul 'Cara Membuat Kompos Sederhana Dari Sampah Organik'." },
+          { text: "Pengalaman membuat pot tanaman digunakan sebagai contoh untuk mendukung gagasan penulis.", key: "Benar", reason: "Pengalaman di paragraf 3 membuktikan bahwa barang bekas dapat dibuat menjadi pot yang berfungsi." },
+          { text: "Paragraf terakhir menegaskan kembali pandangan penulis tentang pemanfaatan barang bekas.", key: "Benar", reason: "Paragraf 4 menyimpulkan bahwa pembiasaan ini membangun karakter kreatif dan tanggung jawab lingkungan." },
+          { text: "Gagasan penulis dalam teks didukung oleh pengalaman yang dialami secara langsung.", key: "Benar", reason: "Penulis menuliskan: 'Saya pernah membuat pot tanaman dari botol plastik bersama beberapa teman'." }
+        ],
+        key: ["Benar", "Benar", "Benar", "Benar"],
+        explanation: {
+          mainConcept: "Seluruh pernyataan bernilai BENAR. Butir pertama terbukti dari ciri visual poster kompos (judul cara membuat + langkah 1-6), sedangkan butir 2, 3, dan 4 membuktikan keutuhan struktur esai argumentasi berbasis pengalaman empiris.",
+          optionAnalysis: [],
+          teacherTips: "Ini adalah butir penutup bertaraf evaluasi sintesis tingkat tinggi yang menghubungkan stimulus visual poster dengan struktur esai argumentasi."
+        }
+      }
+    ];
+
+    let currentFilterTP = "all";
+    let isAllExpanded = false;
+
+    function renderCards() {
+      const container = document.getElementById("cardsContainer");
+      container.innerHTML = "";
+
+      const sKeyword = document.getElementById("searchInput").value.toLowerCase().trim();
+      const fType = document.getElementById("typeFilter").value;
+
+      const filtered = TEACHER_DATABASE.filter(item => {
+        const matchTP = (currentFilterTP === "all") || (item.tp === currentFilterTP);
+        const matchType = (fType === "all") || (item.type === fType);
+        const matchSearch = item.question.toLowerCase().includes(sKeyword) || 
+                            item.stimulusRef.toLowerCase().includes(sKeyword) ||
+                            item.competency.toLowerCase().includes(sKeyword);
+        return matchTP && matchType && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-sm">
+            <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3">
+              <i class="fa-solid fa-filter-circle-xmark"></i>
+            </div>
+            <h3 class="font-extrabold text-slate-800 text-lg">Tidak Ada Butir yang Cocok</h3>
+            <p class="text-xs text-slate-500 mt-1">Coba sesuaikan kata kunci pencarian atau pilih kategori TP lainnya.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden transition hover:shadow-md page-break";
+        card.id = `card-q-${item.id}`;
+
+        // Type pill styling
+        let typeBadge = "";
+        if (item.type === "single") typeBadge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-sky-100 text-sky-800 border border-sky-200">PG Tunggal (2 Poin)</span>';
+        else if (item.type === "multiple") typeBadge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-indigo-100 text-indigo-800 border border-indigo-200">PG Kompleks (3 Poin)</span>';
+        else typeBadge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-800 border border-amber-200">Tabel Benar/Salah (3 Poin)</span>';
+
+        // Options or Table display
+        let choicesHTML = "";
+        if (item.type === "single" || item.type === "multiple") {
+          choicesHTML = `
+            <div class="grid grid-cols-1 gap-2 my-3">
+              ${item.options.map(opt => {
+                const isKey = Array.isArray(item.key) ? item.key.includes(opt) : (item.key === opt);
+                return `
+                  <div class="p-3 rounded-xl border text-xs flex items-start justify-between gap-3 ${
+                    isKey ? 'bg-emerald-50/80 border-emerald-400 font-bold text-emerald-950 ring-1 ring-emerald-400' : 'bg-slate-50 border-slate-200 text-slate-700'
+                  }">
+                    <span class="leading-relaxed">${opt}</span>${isKey ? '<span class="px-2 py-0.5 rounded bg-emerald-600 text-white font-mono text-[10px] uppercase flex-shrink-0 tracking-wider">KUNCI BENAR</span>' : '<span class="text-[10px] text-slate-400 uppercase font-mono">Pengecoh</span>'}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        } else {
+          choicesHTML = `
+            <div class="overflow-x-auto my-3 border border-slate-200 rounded-xl">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead class="bg-slate-100 text-slate-700 uppercase font-bold text-[10px]">
+                  <tr>
+                    <th class="p-2.5 w-12 text-center">No</th>
+                    <th class="p-2.5">Pernyataan Soal</th>
+                    <th class="p-2.5 w-24 text-center">Kunci</th>
+                    <th class="p-2.5">Alasan Kunci</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${item.rows.map((r, rIdx) => `
+                    <tr class="hover:bg-slate-50">
+                      <td class="p-2.5 text-center font-bold text-slate-500">${rIdx + 1}</td>
+                      <td class="p-2.5 font-medium text-slate-800">${r.text}</td>
+                      <td class="p-2.5 text-center">
+                        <span class="px-2 py-1 rounded font-black text-[11px] ${r.key === 'Benar' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'}">${r.key}</span>
+                      </td>
+                      <td class="p-2.5 text-[11px] text-slate-500 italic">${r.reason}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+
+        // Analysis section for options
+        let optionDetailsHTML = "";
+        if (item.explanation.optionAnalysis && item.explanation.optionAnalysis.length > 0) {
+          optionDetailsHTML = `
+            <div class="mt-4 pt-3 border-t border-slate-200">
+              <h5 class="text-xs font-black uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-1.5">
+                <i class="fa-solid fa-code-compare text-blue-600"></i> Bedah & Relevansi Setiap Opsi Jawaban:
+              </h5>
+              <div class="space-y-2">
+                ${item.explanation.optionAnalysis.map(oa => `
+                  <div class="p-2.5 rounded-xl border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 ${
+                    oa.status === 'BENAR' ? 'bg-emerald-50 border-emerald-200 text-emerald-950' : 'bg-slate-50 border-slate-200 text-slate-700'
+                  }">
+                    <div class="font-bold flex items-center gap-2">
+                      <span class="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black ${oa.status === 'BENAR' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">
+                        ${oa.status === 'BENAR' ? '✓' : '✗'}
+                      </span>
+                      <span>${oa.opt}</span>
+                    </div>
+                    <div class="text-[11px] sm:text-right ${oa.status === 'BENAR' ? 'text-emerald-800 font-semibold' : 'text-slate-500 italic'}">
+                      ${oa.note}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <!-- Header Card -->
+          <div class="bg-slate-50 p-4 sm:p-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-2xl bg-slate-900 text-white font-display font-black text-sm flex items-center justify-center shadow-sm">
+                ${item.id}
+              </span>
+              <div>
+                <span class="text-xs font-black text-blue-700 block">${item.tpTitle}</span>
+                <span class="text-[11px] font-bold text-slate-500">Stimulus: ${item.stimulusRef}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              ${typeBadge}
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">${item.level}</span>
+            </div>
+          </div>
+
+          <!-- Body Card: Soal & Opsi -->
+          <div class="p-5 sm:p-6 space-y-4">
+            <div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Pertanyaan Naskah Ujian:</span>
+              <p class="font-display font-bold text-slate-900 text-base sm:text-lg leading-relaxed whitespace-pre-line">${item.question}</p>
+            </div>
+
+            <!-- Choices / Options -->
+            ${choicesHTML}
+
+            <!-- Expandable Teacher Note Box -->
+            <div class="pt-2">
+              <button type="button" onclick="toggleCardSpoiler(${item.id})" class="text-xs font-black text-blue-700 hover:text-blue-800 flex items-center gap-1.5 transition select-none">
+                <i class="fa-solid fa-chevron-down transform transition-transform duration-200" id="chevron-q-${item.id}"></i>
+                <span id="label-q-${item.id}">Tampilkan Analisis Ilmiah & Kunci Guru</span>
+              </button>
+
+              <div id="spoiler-q-${item.id}" class="hidden mt-3 p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 text-white text-xs space-y-3.5 border border-slate-800 shadow-inner">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+                  <div class="flex items-center gap-2">
+                    <span class="text-amber-400 font-extrabold text-sm"><i class="fa-solid fa-key"></i> KUNCI:</span>
+                    <span class="font-mono text-emerald-400 font-black text-sm bg-slate-950 px-2 py-0.5 rounded border border-slate-700">
+                      ${Array.isArray(item.key) ? item.key.join(', ') : item.key}
+                    </span>
+                  </div>
+                  <span class="text-[10px] text-slate-400 font-mono">Indikator: ${item.competency}</span>
+                </div>
+
+                <div>
+                  <span class="text-[10px] font-black uppercase tracking-wider text-indigo-300 block mb-1">Landasan Bukti Pada Naskah & Konsep:</span>
+                  <p class="text-slate-200 leading-relaxed text-xs">${item.explanation.mainConcept}</p>
+                </div>
+
+                ${optionDetailsHTML}
+
+                <div class="p-3 bg-amber-950/40 border border-amber-500/30 rounded-xl text-amber-200 text-[11px] flex items-start gap-2.5">
+                  <i class="fa-solid fa-lightbulb text-amber-400 text-sm mt-0.5 flex-shrink-0"></i>
+                  <div>
+                    <strong class="font-black text-amber-300 uppercase tracking-wide">Tips Remedial / Catatan Guru:</strong>
+                    <p class="mt-0.5 leading-relaxed">${item.explanation.teacherTips}</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function toggleCardSpoiler(id) {
+      const box = document.getElementById(`spoiler-q-${id}`);
+      const icon = document.getElementById(`chevron-q-${id}`);
+      const label = document.getElementById(`label-q-${id}`);
+
+      if (box.classList.contains("hidden")) {
+        box.classList.remove("hidden");
+        icon.classList.add("rotate-180");
+        label.textContent = "Sembunyikan Analisis & Kunci Guru";
+      } else {
+        box.classList.add("hidden");
+        icon.classList.remove("rotate-180");
+        label.textContent = "Tampilkan Analisis Ilmiah & Kunci Guru";
+      }
+    }
+
+    function toggleAllExplanations() {
+      isAllExpanded = !isAllExpanded;
+      const allBoxes = document.querySelectorAll('[id^="spoiler-q-"]');
+      const allIcons = document.querySelectorAll('[id^="chevron-q-"]');
+      const allLabels = document.querySelectorAll('[id^="label-q-"]');
+
+      allBoxes.forEach(b => {
+        if (isAllExpanded) b.classList.remove("hidden");
+        else b.classList.add("hidden");
+      });
+
+      allIcons.forEach(i => {
+        if (isAllExpanded) i.classList.add("rotate-180");
+        else i.classList.remove("rotate-180");
+      });
+
+      allLabels.forEach(l => {
+        l.textContent = isAllExpanded 
+          ? "Sembunyikan Analisis & Kunci Guru" 
+          : "Tampilkan Analisis Ilmiah & Kunci Guru";
+      });
+
+      document.getElementById("toggleAllLabel").textContent = isAllExpanded 
+        ? "Tutup Semua Pembahasan" 
+        : "Buka Semua Pembahasan";
+    }
+
+    function filterByTP(tpKey) {
+      currentFilterTP = tpKey;
+      document.querySelectorAll(".tp-btn").forEach(btn => {
+        btn.className = "tp-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+      });
+      document.getElementById(`btn-tp-${tpKey}`).className = "tp-btn px-3 py-1.5 rounded-lg font-extrabold bg-blue-600 text-white transition";
+      renderCards();
+    }
+
+    function applyFilters() {
+      renderCards();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      renderCards();
+    });
+  </script>
+</body>
+</html>
