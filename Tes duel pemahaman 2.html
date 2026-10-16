@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arena Duel Kelompok: Teks Prosedur Kelas 9 - SMPN 28 Bandung</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; }
+    .bracket-container { display: flex; gap: 1.5rem; overflow-x: auto; padding: 0.5rem; align-items: stretch; }
+    .bracket-round { display: flex; flex-direction: column; justify-content: space-around; min-width: 270px; }
+    .bracket-match { background: #1e293b; border: 1px solid #334155; border-radius: 0.85rem; padding: 0.6rem; margin: 0.4rem 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.4); position: relative; }
+    .bracket-team { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.6rem; font-size: 0.85rem; font-weight: 800; border-radius: 0.5rem; }
+    .bracket-team.winner { background-color: #064e3b; color: #34d399; border: 1px solid #059669; }
+    .bracket-team.loser { opacity: 0.4; text-decoration: line-through; }
+    
+    @keyframes modalPop {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop { animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen w-screen overflow-hidden flex flex-col select-none text-sm">
+
+  <!-- POP-UP WINNER CONFETTI UNTUK SPIN SISWA -->
+  <div id="winnerModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gradient-to-b from-slate-900 via-slate-900 to-cyan-950 border-2 border-cyan-400 rounded-3xl p-6 max-w-md w-full text-center shadow-2xl animate-pop relative overflow-hidden">
+      <div class="w-16 h-16 bg-cyan-500/20 text-cyan-400 border border-cyan-400/40 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg">
+        <i class="fa-solid fa-user-astronaut"></i>
+      </div>
+      <span class="text-xs font-black uppercase tracking-widest text-amber-400 bg-amber-950/60 border border-amber-500/40 px-3 py-0.5 rounded-full">SISWA TERPILIH!</span>
+      <h2 id="winnerStudentName" class="text-3xl font-black text-white my-3 leading-tight">NAMA SISWA</h2>
+      <p class="text-sm text-slate-300 mb-5">Masuk ke kelompok <b id="winnerGroupName" class="text-cyan-400 font-black text-base">BUNG TOMO</b></p>
+      <button onclick="closeWinnerModal()" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black text-sm rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-check-circle"></i> MASUKKAN KE KELOMPOK
+      </button>
+    </div>
+  </div>
+
+  <!-- POP-UP JUARA UTAMA TURNAMEN KELAS -->
+  <div id="championModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gradient-to-b from-amber-950 via-slate-900 to-slate-950 border-2 border-amber-400 rounded-3xl p-6 max-w-md w-full text-center shadow-2xl animate-pop">
+      <div class="w-20 h-20 bg-amber-500/20 text-amber-400 border-2 border-amber-400 rounded-full flex items-center justify-center text-4xl mx-auto mb-3 shadow-xl animate-bounce">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+      <span class="text-xs font-black uppercase tracking-widest text-amber-300 bg-amber-950 border border-amber-500 px-3 py-1 rounded-full">JUARA GRAND FINAL</span>
+      <h2 id="championGroupName" class="text-3xl font-black text-white my-2">KELOMPOK JUARA</h2>
+      <p class="text-xs text-slate-300 mb-5">Selamat kepada kelompok yang telah menuntaskan seluruh rintangan analitis teks prosedur!</p>
+      <button onclick="document.getElementById('championModal').classList.add('hidden')" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg transition">
+        TUTUP & LIHAT REKAP
+      </button>
+    </div>
+  </div>
+
+  <!-- HEADER BAR ATAS (COMPACT, BGM PLAYER, FULLSCREEN) -->
+  <header class="bg-slate-900 border-b border-slate-800 px-4 py-1.5 flex items-center justify-between flex-shrink-0 z-30 h-12">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 via-indigo-600 to-amber-400 flex items-center justify-center text-white shadow">
+        <i class="fa-solid fa-users text-sm"></i>
+      </div>
+      <div>
+        <h1 class="font-black text-sm sm:text-base tracking-tight text-white leading-tight">DUEL ANALITIS TEKS PROSEDUR</h1>
+        <span class="text-[11px] text-cyan-400 font-bold block">Soal Berjenjang: Babak Awal (Mudah) • Semifinal/Final (Sulit HOTS)</span>
+      </div>
+    </div>
+
+    <!-- AUDIO CONTROLS & UTILITIES -->
+    <div class="flex items-center gap-2">
+      <!-- WIDGET BGM PLAYER LOKAL -->
+      <div class="hidden md:flex items-center bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 gap-2">
+        <label for="bgmFileInput" class="cursor-pointer text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5" title="Unggah lagu MP3/WAV dari perangkat">
+          <i class="fa-solid fa-music"></i> <span id="bgmTrackTitle" class="max-w-[100px] truncate">Pilih Musik</span>
+        </label>
+        <input type="file" id="bgmFileInput" accept="audio/*" class="hidden" onchange="handleAudioUpload(event)">
+        
+        <button id="btnPlayAudio" onclick="toggleBGMPlay()" class="text-slate-400 hover:text-white text-xs disabled:opacity-40" disabled>
+          <i class="fa-solid fa-play"></i>
+        </button>
+
+        <input type="range" id="bgmVolumeSlider" min="0" max="1" step="0.05" value="0.3" oninput="changeBGMVolume(this.value)" class="w-16 accent-cyan-400 h-1 cursor-pointer">
+      </div>
+
+      <!-- FULLSCREEN TOGGLE -->
+      <button onclick="toggleFullScreen()" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs" title="Layar Penuh">
+        <i class="fa-solid fa-expand"></i>
+      </button>
+
+      <!-- MENU NAVIGASI TAB -->
+      <nav class="flex space-x-1 font-bold text-xs">
+        <button onclick="setActiveTab('groups')" id="tabBtn-groups" class="tab-btn px-2.5 py-1 rounded-lg bg-cyan-600 text-white flex items-center gap-1">
+          <i class="fa-solid fa-dharmachakra"></i> 1. Siswa
+        </button>
+        <button onclick="setActiveTab('spin')" id="tabBtn-spin" class="tab-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white flex items-center gap-1">
+          <i class="fa-solid fa-swords"></i> 2. Antrean
+        </button>
+        <button onclick="setActiveTab('bracket')" id="tabBtn-bracket" class="tab-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white flex items-center gap-1">
+          <i class="fa-solid fa-sitemap"></i> 3. Bagan
+        </button>
+        <button onclick="setActiveTab('exam')" id="tabBtn-exam" class="tab-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white flex items-center gap-1">
+          <i class="fa-solid fa-gamepad"></i> 4. Duel
+        </button>
+        <button onclick="setActiveTab('recap')" id="tabBtn-recap" class="tab-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white flex items-center gap-1">
+          <i class="fa-solid fa-table-list"></i> 5. Rekap
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- KONTEN UTAMA DENGAN TINGGI PERSIS LAYAR -->
+  <main class="flex-grow w-full h-[calc(100vh-48px)] overflow-hidden relative p-2.5">
+
+    <!-- TAB 1: SPIN ANGGOTA SISWA KE 8 KELOMPOK -->
+    <section id="tab-groups" class="tab-content block h-full w-full overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 h-full">
+        <div class="lg:col-span-5 bg-slate-900 rounded-2xl p-3.5 border border-slate-800 flex flex-col justify-between h-full">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <h2 class="text-xs font-black text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-paste text-cyan-400"></i> Daftar Siswa Hadir
+              </h2>
+              <span id="studentCountBadge" class="text-xs font-mono text-cyan-300 bg-cyan-950 px-2 py-0.5 rounded border border-cyan-800">0 Siswa</span>
+            </div>
+            <textarea id="inputRawStudents" rows="2" placeholder="Tempel nama siswa (satu nama per baris)..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono custom-scrollbar mb-1 resize-none"></textarea>
+          </div>
+
+          <div class="relative flex flex-col items-center justify-center my-auto py-1">
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none filter drop-shadow">
+              <div class="w-0 h-0 border-t-[14px] border-t-transparent border-b-[14px] border-b-transparent border-r-[28px] border-r-rose-500 rotate-180"></div>
+            </div>
+            <canvas id="studentWheelCanvas" width="400" height="400" onclick="spinNextStudent()" class="max-h-[38vh] w-auto select-none rounded-full shadow-2xl cursor-pointer transform hover:scale-105 transition-transform border-4 border-slate-800"></canvas>
+            
+            <button onclick="spinNextStudent()" class="absolute inset-auto w-16 h-16 rounded-full bg-slate-950 border-4 border-cyan-400 text-cyan-400 font-black text-xs flex flex-col items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition z-10 leading-none">
+              <span>SPIN!</span>
+              <i class="fa-solid fa-arrows-spin text-[11px] mt-0.5"></i>
+            </button>
+          </div>
+
+          <div class="space-y-2">
+            <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+              <span class="text-slate-400 font-bold">Target Tim:</span>
+              <span id="currentTargetGroupLabel" class="font-black text-cyan-400 uppercase text-xs">BUNG TOMO</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btnSpinStudent" onclick="spinNextStudent()" class="py-2.5 bg-gradient-to-r from-cyan-600 via-indigo-600 to-blue-600 hover:opacity-90 text-white font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow transition">
+                <i class="fa-solid fa-dharmachakra"></i> PUTAR RODA
+              </button>
+              <button onclick="autoSpinAllStudents()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1 border border-slate-700">
+                <i class="fa-solid fa-bolt"></i> Isi Otomatis
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 bg-slate-900 rounded-2xl p-3.5 border border-slate-800 flex flex-col h-full overflow-hidden">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-800 flex-shrink-0">
+            <div>
+              <h3 class="text-sm font-black text-white flex items-center gap-2">
+                <i class="fa-solid fa-users-viewfinder text-cyan-400"></i> Distribusi 8 Kelompok Pahlawan
+              </h3>
+              <p class="text-xs text-slate-400">Pembagian kuota siswa adil dan merata otomatis.</p>
+            </div>
+            <button onclick="setActiveTab('bracket')" class="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:opacity-90 text-white font-black rounded-lg text-xs flex items-center gap-1">
+              Bagan Turnamen <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+          <div id="groupsGridContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 overflow-y-auto custom-scrollbar my-2 flex-grow pr-0.5"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: ANTREAN PERTANDINGAN -->
+    <section id="tab-spin" class="tab-content hidden h-full w-full">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 h-full">
+        <div class="lg:col-span-8 bg-slate-900 rounded-2xl p-5 border border-slate-800 flex flex-col items-center justify-between h-full">
+          <div class="w-full flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-black text-white flex items-center gap-2">
+                <i class="fa-solid fa-swords text-cyan-400"></i> Jadwal & Antrean Pertandingan
+              </h2>
+              <p class="text-xs text-slate-400">Pemenang match otomatis lolos ke babak berikutnya.</p>
+            </div>
+            <button onclick="startNextScheduledMatch()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-black rounded-xl text-xs flex items-center gap-2 shadow">
+              <i class="fa-solid fa-play"></i> Mainkan Match Selanjutnya
+            </button>
+          </div>
+
+          <div class="my-auto text-center max-w-lg bg-slate-950 p-6 rounded-2xl border border-slate-800">
+            <div class="w-14 h-14 rounded-xl bg-cyan-500/20 text-cyan-400 mx-auto flex items-center justify-center text-3xl mb-3 border border-cyan-500/30">
+              <i class="fa-solid fa-diagram-project"></i>
+            </div>
+            <h3 class="text-lg font-black text-white mb-1.5" id="nextMatchTitle">Match Siap Dimainkan</h3>
+            <p class="text-xs text-slate-400 mb-5 leading-relaxed" id="nextMatchDesc">
+              Buka tab <b>Bagan Turnamen</b> untuk melihat status bagan atau klik tombol di bawah untuk duel.
+            </p>
+            <div class="flex justify-center gap-3">
+              <button onclick="setActiveTab('bracket')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs border border-slate-700">
+                Buka Bagan
+              </button>
+              <button onclick="startNextScheduledMatch()" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:opacity-90 text-white font-black rounded-xl text-xs shadow">
+                Masuk ke Arena Duel
+              </button>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-500 italic text-center">
+            * 3 Menit (180 Detik) per sesi dengan 10 butir soal analisis teks prosedur.
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 bg-slate-900 rounded-2xl p-4 border border-slate-800 flex flex-col h-full">
+          <div class="pb-2 border-b border-slate-800 flex justify-between items-center">
+            <h3 class="font-black text-white text-xs sm:text-sm">Status Kelompok Pahlawan</h3>
+            <span class="text-xs font-mono font-bold text-slate-400" id="queueGroupRatioLabel">0 / 8 Bertanding</span>
+          </div>
+          <div id="attendanceGroupContainer" class="space-y-2 overflow-y-auto custom-scrollbar my-2 flex-grow pr-0.5"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: BAGAN TURNAMEN -->
+    <section id="tab-bracket" class="tab-content hidden h-full w-full overflow-hidden flex flex-col bg-slate-900 rounded-2xl p-4 border border-slate-800">
+      <div class="flex justify-between items-center pb-2.5 border-b border-slate-800 flex-shrink-0">
+        <div>
+          <h2 class="text-sm sm:text-base font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-sitemap text-cyan-400"></i> Bagan Turnamen Sistem Gugur (Pemenang vs Pemenang)
+          </h2>
+          <p class="text-xs text-slate-400">Pemenang babak awal melaju ke Semi Final & Grand Final dengan paket soal tingkat sulit.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="startNextScheduledMatch()" class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:opacity-90 text-white font-black rounded-lg text-xs flex items-center gap-1.5 shadow">
+            <i class="fa-solid fa-play"></i> Mainkan Match Selanjutnya
+          </button>
+          <button onclick="resetTournamentTreeConfirm()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-rose-300 font-bold rounded-lg text-xs flex items-center gap-1 border border-slate-700">
+            <i class="fa-solid fa-rotate"></i> Reset
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-grow overflow-auto custom-scrollbar mt-2">
+        <div id="bracketDisplayArea" class="bracket-container min-w-[900px] h-full"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: ARENA DUEL (SPLIT DUA KOLOM + FONT BESAR ANTI-SCROLL) -->
+    <section id="tab-exam" class="tab-content hidden h-full w-full overflow-hidden flex flex-col">
+      <div id="examContainerEmpty" class="bg-slate-900 rounded-2xl p-6 text-center border-2 border-dashed border-slate-800 flex flex-col items-center justify-center h-full">
+        <div class="w-16 h-16 rounded-2xl bg-cyan-950 border border-cyan-500/40 text-cyan-400 mx-auto flex items-center justify-center text-3xl mb-3 shadow">
+          <i class="fa-solid fa-stopwatch-20"></i>
+        </div>
+        <h3 class="text-xl font-black text-white">Arena Duel Belum Dimulai</h3>
+        <p class="text-xs text-slate-400 max-w-md mx-auto mt-1 mb-4 leading-relaxed">
+          Format Pertandingan: <b>Kelompok A (Sudut Biru)</b> 10 Soal (3 Menit). Dilanjutkan <b>Kelompok B (Sudut Merah)</b> 10 Soal (3 Menit).
+        </p>
+        <button onclick="startNextScheduledMatch()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-black shadow-lg flex items-center gap-1.5">
+          <i class="fa-solid fa-play"></i> Mulai Match Sesuai Bagan
+        </button>
+      </div>
+
+      <div id="examQuestionSection" class="hidden flex-col justify-between h-full w-full gap-2.5 overflow-hidden">
+        
+        <!-- SCOREBOARD BARIS ATAS -->
+        <div class="grid grid-cols-12 gap-3 flex-shrink-0 items-center">
+          <!-- KARTU KELOMPOK A -->
+          <div id="cardGroupA" class="col-span-5 bg-gradient-to-r from-blue-950 via-slate-900 to-slate-900 border border-blue-500/80 rounded-xl px-3.5 py-2 shadow transition-all">
+            <div class="flex items-center justify-between">
+              <div class="truncate max-w-[70%]">
+                <span id="badgeActiveA" class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-blue-500 text-white">KELOMPOK A (BIRU)</span>
+                <h3 id="duelNameA" class="text-base font-black text-white truncate leading-tight mt-0.5">Bung Tomo</h3>
+                <span id="turnIndicatorA" class="text-[11px] text-cyan-300 font-bold block truncate">Giliran Bertanding</span>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Benar / Raport</span>
+                <span id="scoreDisplayA" class="text-2xl font-black font-mono text-cyan-400 leading-none">0 / 75</span>
+              </div>
+            </div>
+            <div class="mt-1.5 pt-1.5 border-t border-slate-800/80 text-xs text-slate-300 truncate" id="duelMembersA">
+              • Anggota: -
+            </div>
+          </div>
+
+          <!-- TIMER UTAMA -->
+          <div class="col-span-2 flex flex-col items-center justify-center bg-slate-900 border border-slate-800 rounded-xl py-1.5 px-1 text-center shadow">
+            <span id="timerLabel" class="text-[10px] font-black uppercase text-slate-400 tracking-wider block">WAKTU TIM A</span>
+            <div id="duelQuestionTimer" class="text-3xl font-black font-mono text-amber-400 leading-none my-0.5">180s</div>
+            <span id="duelQuestionBadge" class="text-[11px] font-black text-cyan-400">SOAL 1/10</span>
+          </div>
+
+          <!-- KARTU KELOMPOK B -->
+          <div id="cardGroupB" class="col-span-5 bg-gradient-to-l from-rose-950 via-slate-900 to-slate-900 border border-rose-500/40 opacity-70 rounded-xl px-3.5 py-2 shadow transition-all">
+            <div class="flex items-center justify-between">
+              <div class="text-left">
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Benar / Raport</span>
+                <span id="scoreDisplayB" class="text-2xl font-black font-mono text-rose-400 leading-none">0 / 75</span>
+              </div>
+              <div class="truncate max-w-[70%] text-right">
+                <span id="badgeActiveB" class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-slate-700 text-slate-300">KELOMPOK B (MERAH)</span>
+                <h3 id="duelNameB" class="text-base font-black text-white truncate leading-tight mt-0.5">Diponegoro</h3>
+                <span id="turnIndicatorB" class="text-[11px] text-slate-400 font-bold block truncate">Menunggu</span>
+              </div>
+            </div>
+            <div class="mt-1.5 pt-1.5 border-t border-slate-800/80 text-right text-xs text-slate-300 truncate" id="duelMembersB">
+              • Anggota: -
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN ARENA STAGE (DUA KOLOM SPLIT DINAMIS & UKURAN TEKS BESAR) -->
+        <div id="duelMainStage" class="flex-grow bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between overflow-hidden relative">
+          
+          <!-- OVERLAY INTERMISSION GILIRAN -->
+          <div id="questionCoverOverlay" class="absolute inset-0 bg-slate-950/95 z-20 flex flex-col items-center justify-center p-6 text-center">
+            <div id="overlayIconBox" class="w-16 h-16 rounded-2xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center text-3xl mb-3 border border-cyan-500/30">
+              <i class="fa-solid fa-play"></i>
+            </div>
+            <h3 id="overlayTitle" class="text-2xl font-black text-white mb-1.5">Giliran Kelompok Bung Tomo</h3>
+            <p id="overlayDesc" class="text-sm text-slate-300 max-w-md mb-6 leading-relaxed">
+              Memiliki batas waktu <b>3 Menit (180 Detik)</b> untuk <b>10 Soal Analisis Teks Prosedur</b>. Waktu terus berjalan antar-soal.
+            </p>
+            <button id="overlayStartBtn" onclick="startCurrentTeamSession()" class="px-8 py-3.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:opacity-90 text-white font-black text-sm rounded-xl shadow-lg flex items-center gap-2 transform active:scale-95 transition">
+              <i class="fa-solid fa-stopwatch"></i> MULAI SESI WAKTU (3 MENIT)
+            </button>
+          </div>
+
+          <!-- TOP BAR: BADGE TOPIK & BABAK DENGAN TINGKAT KESULITAN -->
+          <div class="flex items-center justify-between mb-2 flex-shrink-0">
+            <div class="flex items-center gap-2">
+              <span id="currentTeamTurnBadge" class="text-xs font-black px-3 py-1 rounded-md bg-blue-600 text-white uppercase tracking-wider">Giliran: Bung Tomo</span>
+              <span id="currentQuestionTopicBadge" class="text-xs font-black text-cyan-400 uppercase tracking-wider">Analisis Prosedur</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="currentDiffLevelBadge" class="text-xs px-3 py-1 rounded-full font-black bg-emerald-950 text-emerald-300 border border-emerald-700">Tingkat: Dasar/Menengah</span>
+              <span id="currentMatchRoundBadge" class="text-xs px-3 py-1 rounded-full font-bold bg-slate-800 text-amber-300 border border-slate-700">Perempat Final</span>
+            </div>
+          </div>
+
+          <!-- AREA INTI SOAL (SPLIT DUA KOLOM DENGAN TIPOGRAFI BESAR) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-grow overflow-hidden items-stretch">
+            
+            <!-- KOLOM KIRI (7/12): STIMULUS TEKS KASUS & PERTANYAAN (FONT LEBIH BESAR & JELAS) -->
+            <div class="lg:col-span-7 flex flex-col justify-between bg-slate-950/80 border border-slate-800 rounded-2xl p-4 overflow-hidden">
+              <div class="flex flex-col flex-grow justify-start overflow-hidden">
+                <div class="flex items-center gap-2 text-xs font-black text-cyan-400 mb-1.5 flex-shrink-0">
+                  <i class="fa-solid fa-file-lines text-xs"></i>
+                  <span id="stimulusTitle">Stimulus Kasus Teks Prosedur:</span>
+                </div>
+                <!-- Box Stimulus Paragraf (Text Base / Text-SM yang sangat terbaca) -->
+                <div id="stimulusText" class="text-sm sm:text-base text-slate-200 font-semibold leading-relaxed italic bg-slate-900/95 p-4 rounded-xl border border-slate-800 mb-2 overflow-y-auto custom-scrollbar flex-grow max-h-[29vh]">
+                  Kutipan teks prosedur akan tampil di sini...
+                </div>
+              </div>
+
+              <!-- Box Pertanyaan Utama (Font Besar & Kontras Tinggi) -->
+              <div class="bg-gradient-to-r from-slate-900 to-slate-950 border-2 border-cyan-500/40 rounded-xl p-3.5 flex-shrink-0">
+                <span class="text-[10px] font-black text-amber-400 uppercase tracking-wider block mb-1">Pertanyaan Analitis:</span>
+                <p id="duelQuestionText" class="text-base sm:text-lg font-black text-white leading-snug">
+                  Pertanyaan analitis akan tampil di sini...
+                </p>
+              </div>
+            </div>
+
+            <!-- KOLOM KANAN (5/12): 4 OPSI JAWABAN VERTIKAL (FONT BESAR & ERGONOMIS) -->
+            <div class="lg:col-span-5 flex flex-col justify-between overflow-hidden">
+              <div id="duelOptionsGrid" class="flex flex-col justify-between gap-2 h-full"></div>
+            </div>
+
+          </div>
+
+          <!-- KOTAK PENJELASAN KUNCI JAWABAN (COMPACT DI BAWAH) -->
+          <div id="explanationBox" class="hidden bg-emerald-950/90 border border-emerald-500/50 rounded-xl p-2.5 text-emerald-200 text-xs sm:text-sm font-bold flex-shrink-0 mt-2">
+            <i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i>
+            <span id="explanationText">Ulasan kunci jawaban dan analisis konseptual.</span>
+          </div>
+        </div>
+
+        <!-- FOOTER KONTROL SOAL -->
+        <div class="flex-shrink-0 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 shadow flex justify-between items-center h-11">
+          <div class="text-xs text-slate-400 flex items-center">
+            <i class="fa-solid fa-circle-info text-cyan-400 mr-2 text-sm"></i> Klik salah satu opsi jawaban (A, B, C, atau D) untuk melanjutkan.
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="skipCurrentQuestion()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold border border-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-forward"></i> Lewati (0 Poin)
+            </button>
+            <button onclick="pauseResumeTimer()" id="btnPauseTimer" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-bold border border-slate-700 flex items-center gap-1">
+              <i class="fa-solid fa-pause"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: REKAP NILAI -->
+    <section id="tab-recap" class="tab-content hidden h-full w-full overflow-y-auto custom-scrollbar">
+      <div class="bg-slate-900 rounded-2xl p-4 border border-slate-800">
+        <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+          <div>
+            <h2 class="text-base font-black text-white">Rekapitulasi Nilai Turnamen Kelompok (Skala 10 Soal: 75 - 98)</h2>
+            <p class="text-xs text-slate-400">Rentang Penilaian: Benar 10 = 98, 9 = 95, 8 = 93, 7 = 90, 6 = 88, 5 = 85, 4 = 83, 3 = 80, 2 = 78, 1 = 76, 0 = 75.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="copyRecapTextToClipboard()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg text-xs font-bold flex items-center gap-1 border border-slate-700">
+              <i class="fa-solid fa-copy"></i> Salin Ringkasan Teks
+            </button>
+            <button onclick="exportRecapToCSV()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-black flex items-center gap-1">
+              <i class="fa-solid fa-file-excel"></i> Unduh CSV
+            </button>
+          </div>
+        </div>
+        <div class="overflow-x-auto mt-2 border border-slate-800 rounded-xl">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950 text-slate-400 uppercase font-black border-b border-slate-800 text-[11px]">
+              <tr>
+                <th class="p-3 text-center">No</th>
+                <th class="p-3">Kelompok Pahlawan</th>
+                <th class="p-3">Daftar Anggota</th>
+                <th class="p-3 text-center">Posisi</th>
+                <th class="p-3 text-center">Benar (/10)</th>
+                <th class="p-3 text-center">Sisa Waktu</th>
+                <th class="p-3 text-center">Nilai Raport</th>
+                <th class="p-3 text-center">Status</th>
+                <th class="p-3">Waktu Tampil</th>
+              </tr>
+            </thead>
+            <tbody id="recapTableBody" class="divide-y divide-slate-800 text-slate-300 text-xs"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ==========================================
+    // AUDIO ENGINE (BGM & WEB AUDIO API SYNTHESIZER SFX)
+    // ==========================================
+    let bgmAudio = new Audio();
+    bgmAudio.loop = true;
+    let isBgmPlaying = false;
+
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudioContext() {
+      if (!audioCtx) audioCtx = new AudioContextClass();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playTone(freq, type, duration, gainVal = 0.1) {
+      try {
+        initAudioContext();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn("Audio Context SFX:", e);
+      }
+    }
+
+    function playSfxTick() { playTone(600, 'square', 0.05, 0.05); }
+    function playSfxCorrect() {
+      playTone(523.25, 'sine', 0.15, 0.15);
+      setTimeout(() => playTone(659.25, 'sine', 0.2, 0.15), 100);
+      setTimeout(() => playTone(783.99, 'sine', 0.25, 0.15), 200);
+    }
+    function playSfxWrong() {
+      playTone(220, 'sawtooth', 0.25, 0.15);
+      setTimeout(() => playTone(185, 'sawtooth', 0.3, 0.15), 150);
+    }
+    function playSfxGameOver() {
+      playTone(440, 'triangle', 0.3, 0.2);
+      setTimeout(() => playTone(330, 'triangle', 0.4, 0.2), 200);
+      setTimeout(() => playTone(220, 'triangle', 0.6, 0.2), 400);
+    }
+
+    function handleAudioUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const objectUrl = URL.createObjectURL(file);
+      bgmAudio.src = objectUrl;
+      bgmAudio.volume = parseFloat(document.getElementById('bgmVolumeSlider').value);
+      document.getElementById('bgmTrackTitle').textContent = file.name;
+      document.getElementById('btnPlayAudio').disabled = false;
+      toggleBGMPlay(true);
+    }
+
+    function toggleBGMPlay(forcePlay = null) {
+      if (!bgmAudio.src) return;
+      const btn = document.getElementById('btnPlayAudio');
+      if (forcePlay === true || (!isBgmPlaying && forcePlay === null)) {
+        bgmAudio.play().then(() => {
+          isBgmPlaying = true;
+          btn.innerHTML = '<i class="fa-solid fa-pause text-cyan-400"></i>';
+        }).catch(err => console.log("Audio Autoplay:", err));
+      } else {
+        bgmAudio.pause();
+        isBgmPlaying = false;
+        btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+      }
+    }
+
+    function changeBGMVolume(val) {
+      if (bgmAudio) bgmAudio.volume = parseFloat(val);
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    // ==========================================
+    // DATA KELOMPOK & DUA BANK SOAL BERJENJANG (TERISOLASI)
+    // ==========================================
+    const HERO_NAMES = [
+      "Bung Tomo",
+      "Diponegoro",
+      "Cut Nyak Dhien",
+      "Ki Hajar Dewantara",
+      "Pangeran Antasari",
+      "Jenderal Soedirman",
+      "R.A. Kartini",
+      "I Gusti Ngurah Rai"
+    ];
+
+    // BANK 1: BABAK PEREMPAT FINAL (TINGKAT DASAR / MENENGAH) - 10 MODEL SEED DIKEMBANGKAN
+    const RAW_EASY_SEEDS = [
+      {
+        stimulusTitle: "Petunjuk Dasar Menyalakan Komputer Sekolah",
+        stimulus: "(1) Pastikan kabel daya terhubung ke stopkontak. (2) Tekan tombol power pada CPU hingga lampu indikator biru menyala. (3) Hidupkan layar monitor dan tunggu proses *booting* sistem operasi selesai.",
+        q: "Kata kerja imperatif yang terdapat pada langkah nomor (2) adalah...",
+        correct: "Tekan",
+        distractors: ["Pastikan", "Menyala", "Terhubung"],
+        exp: "Kata 'Tekan' merupakan kata kerja perintah langsung (imperatif) yang menginstruksikan tindakan fisik."
+      },
+      {
+        stimulusTitle: "Konversi Peristiwa Sehari-hari ke Teks Prosedur",
+        stimulus: "‘Rudi dengan tergesa-gesa menuangkan 2 sendok teh gula ke dalam cangkir teh hangatnya sebelum berangkat ke sekolah.’",
+        q: "Perubahan kalimat narasi di atas menjadi kalimat prosedur baku yang tepat adalah...",
+        correct: "Masukkan 2 sendok teh gula ke dalam cangkir teh hangat!",
+        distractors: [
+          "Rudi memasukkan gula dengan rasa tergesa-gesa agar manis.",
+          "Teh hangat dimasukkan 2 sendok gula oleh Rudi di rumah.",
+          "Apakah Rudi sudah memasukkan 2 sendok teh gula ke cangkirnya?"
+        ],
+        exp: "Teks prosedur menghilangkan keterangan emosional subjek ('dengan tergesa-gesa') dan langsung menggunakan verba imperatif."
+      },
+      {
+        stimulusTitle: "Cara Mematikan Lampu Proyektor Kelas",
+        stimulus: "(1) Tekan tombol power pada remote dua kali. (2) Jangan langsung mencabut kabel listrik utama saat kipas pendingin masih berputar kencang.",
+        q: "Fungsi kata 'Jangan' pada langkah nomor (2) adalah...",
+        correct: "Menyatakan kalimat perintah larangan (imperatif negatif)",
+        distractors: [
+          "Menjelaskan bahan material pembuatan proyektor",
+          "Menyatakan konjungsi urutan waktu antar-kegiatan",
+          "Memberikan apresiasi keberhasilan mematikan alat"
+        ],
+        exp: "Kata 'jangan' atau 'dilarang' merupakan penanda imperatif larangan dalam kaidah teks prosedur."
+      },
+      {
+        stimulusTitle: "Struktur Resep Pembuatan Minuman Hangat",
+        stimulus: "‘Bahan: 1 ruas jahe merah memar, 300 ml air bersih, dan 1 sendok makan madu murni.’",
+        q: "Kutipan di atas menduduki bagian struktur teks prosedur yaitu...",
+        correct: "Bahan dan Takaran",
+        distractors: ["Tujuan / Orientasi", "Langkah Kronologis", "Penutup / Reorientasi"],
+        exp: "Menyebutkan rincian material beserta batasan kuantitas fisik yang dibutuhkan."
+      },
+      {
+        stimulusTitle: "Urutan Pembuatan Teh Manis",
+        stimulus: "(1) Seduh kantong teh dengan air panas. (2) Selanjutnya, tambahkan gula secukupnya. (3) Aduk hingga gula larut sempurna.",
+        q: "Kata 'Selanjutnya' pada kalimat (2) berfungsi sebagai...",
+        correct: "Konjungsi temporal penanda urutan langkah berikutnya",
+        distractors: [
+          "Keterangan alat bantu pengadukan",
+          "Keterangan tempat penyimpanan cangkir",
+          "Kaidah perbandingan rasa teh manis"
+        ],
+        exp: "Kata 'selanjutnya' adalah konjungsi temporal yang menghubungkan tahapan tindakan."
+      },
+      {
+        stimulusTitle: "Panduan Mencuci Tangan Bersih",
+        stimulus: "‘Gosok kedua telapak tangan menggunakan sabun cair selama 20 detik di bawah air mengalir.’",
+        q: "Frasa 'selama 20 detik' dalam kalimat tersebut berfungsi sebagai...",
+        correct: "Keterangan pembatas durasi waktu tindakan",
+        distractors: [
+          "Keterangan jenis sabun cair yang dibeli",
+          "Keterangan tempat mencuci tangan",
+          "Keterangan alat mekanis pembersih"
+        ],
+        exp: "Menjelaskan batasan durasi lamanya tindakan fisik harus dilaksanakan."
+      },
+      {
+        stimulusTitle: "Penggunaan Tanda Baca Kalimat Perintah",
+        stimulus: "‘Tuangkan 100 ml santan cair ke dalam panci (...)’",
+        q: "Tanda baca baku yang paling tepat untuk mengakhiri kalimat instruksi di atas adalah...",
+        correct: "Tanda seru (!)",
+        distractors: ["Tanda tanya (?)", "Tanda titik dua (:)", "Tanda petik ganda (\")"],
+        exp: "Kalimat perintah atau imperatif diakhiri dengan tanda seru (!)."
+      },
+      {
+        stimulusTitle: "Kutipan Kalimat Penutup Resep",
+        stimulus: "‘Puding cokelat siap dihidangkan selagi dingin. Selamat menikmati hidangan penutup yang lezat ini bersama keluarga!’",
+        q: "Kutipan di atas tergolong dalam bagian struktur...",
+        correct: "Penutup / Reorientasi",
+        distractors: ["Tujuan Utama", "Alat dan Bahan", "Langkah Inti"],
+        exp: "Penutup menyajikan ucapan selamat atau saran penyajian akhir."
+      },
+      {
+        stimulusTitle: "Pengubahan Kalimat Pasif ke Kalimat Aktif Imperatif",
+        stimulus: "Kalimat asal: 'Kertas karton digunting menjadi bentuk lingkaran.'",
+        q: "Bentuk imperatif aktif yang benar dari kalimat di atas adalah...",
+        correct: "Guntinglah kertas karton menjadi bentuk lingkaran!",
+        distractors: [
+          "Apakah kertas karton digunting menjadi lingkaran?",
+          "Kertas karton sebaiknya digunting siswa.",
+          "Pengguntingan karton dilakukan melingkar."
+        ],
+        exp: "Verba pasif 'digunting' diubah menjadi verba aktif perintah 'Guntinglah'."
+      },
+      {
+        stimulusTitle: "Kaidah Bahasa Baku Panduan Digital",
+        stimulus: "‘Klik ikon 'Download' untuk mengunduh berkas materi pelajaran.’",
+        q: "Padanan kata baku bahasa Indonesia untuk kata 'Download' adalah...",
+        correct: "Unduh",
+        distractors: ["Unggah", "Tautkan", "Salin"],
+        exp: "Dalam istilah resmi bahasa Indonesia, 'download' berpadanan dengan kata 'unduh'."
+      }
+    ];
+
+    // BANK 2: BABAK SEMIFINAL & GRAND FINAL (TINGKAT SULIT / HOTS) - 10 MODEL SEED HOTS
+    const RAW_HARD_SEEDS = [
+      {
+        stimulusTitle: "Analisis Prosedur Distilasi Minyak Atsiri",
+        stimulus: "(1) Masukkan 2 kg daun sereh kering ke dalam ketel suling. (2) Rapatkan klem penutup ketel dan pastikan aliran air pendingin kondensor menyala sebelum kompor dipanaskan. (3) Jaga kestabilan api pada suhu uap 95°C–100°C.",
+        q: "Analisis akibat teknis paling krusial apabila aliran air pendingin kondensor pada langkah (2) terlambat dihidupkan adalah...",
+        correct: "Uap minyak atsiri tidak mengalami kondensasi sehingga keluar berupa gas yang terbuang dan berisiko memicu tekanan berlebih",
+        distractors: [
+          "Daun sereh di dalam ketel akan langsung terbakar menjadi arang hitam",
+          "Klem penutup ketel otomatis pecah seketika akibat suhu uap dingin",
+          "Minyak atsiri otomatis bercampur dengan air kondensor menjadi emulsi susu"
+        ],
+        exp: "Fungsi kondensor adalah mendinginkan uap menjadi fase cair. Jika pendingin mati, uap lolos dan tekanan dalam bejana naik tajam."
+      },
+      {
+        stimulusTitle: "Dekonstruksi Fiksi Kompleks ke SOP Nonfiksi",
+        stimulus: "‘Dengan sorot mata ketakutan di tengah malam buta, Arga menyalakan generator cadangan saat mencium bau logam terbakar dari kabel panel utama, berharap kobaran api tidak menyambar drum bensin di sudut ruangan.’",
+        q: "Berdasarkan standar prosedur keselamatan operasional (SOP), kekeliruan fatal dalam tindakan narasi di atas adalah...",
+        correct: "Menyalakan generator listrik saat tercium bau isolator kabel terbakar dan berada dekat bahan mudah terbakar",
+        distractors: [
+          "Menyalakan generator pada tengah malam buta tanpa penerangan lampu senter",
+          "Tidak mematikan drum bensin sebelum memeriksa panel kelistrikan utama",
+          "Membiarkan sorot mata ketakutan mengganggu konsentrasi memindahkan generator"
+        ],
+        exp: "Kaidah keselamatan melarang menyalakan sakelar/generator saat ada indikasi korsleting dekat uap bahan bakar."
+      },
+      {
+        stimulusTitle: "Analisis Presisi Derajat Kuantitas Biokimia",
+        stimulus: "(1) Kalibrasi elektroda pH meter menggunakan larutan buffer standar 7,0. (2) Teteskan larutan HCl 0,1 M hingga pH larutan fermentasi mencapai 4,5 ± 0,1. (3) Simpan media pada suhu 32°C di inkubator.",
+        q: "Mengapa toleransi '± 0,1' pada langkah (2) merupakan syarat mutlak dalam teks prosedur ilmiah?",
+        correct: "Penyimpangan derajat keasaman mikro dapat merusak enzim mikroorganisme target fermentasi",
+        distractors: [
+          "Agar elektroda alat ukur pH meter tidak berkarat terkena cairan asam HCl",
+          "Merupakan batasan standar aturan dagang cairan buffer kalibrasi pabrik",
+          "Untuk mempermudah penulisan laporan tanpa perlu melakukan titrasi presisi"
+        ],
+        exp: "Dalam prosedur biokimia, nilai pH spesifik menentukan aktivitas biologis enzim secara mutlak."
+      },
+      {
+        stimulusTitle: "Evaluasi Hubungan Klausula Syarat & Tindakan SOP",
+        stimulus: "‘Apabila sensor tekanan menunjukkan angka di atas 5 bar dan katup pelepas darurat tidak merespons dalam waktu 10 detik, segera matikan kompresor dan evakuasi seluruh personil dari radius 15 meter!’",
+        q: "Struktur kalimat prosedur di atas memiliki fungsi kebahasaan berupa...",
+        correct: "Hubungan syarat bertingkat berisiko fatal yang memicu rantai tindakan darurat",
+        distractors: [
+          "Keterangan perbandingan kualitas antar-mesin kompresor pabrik",
+          "Reorientasi penutup yang berisi ucapan selamat dan simpulan umum",
+          "Deskripsi puitis mengenai getaran gelombang tekanan udara mekanik"
+        ],
+        exp: "Kalimat memadukan dua kondisi syarat darurat yang memicu instruksi keselamatan berantai."
+      },
+      {
+        stimulusTitle: "Analisis Logika Kronologis Bercabang",
+        stimulus: "‘Jika pasta solder telah meleleh sempurna pada kaki komponen IC, segera angkat ujung solder dalam waktu 2 detik. Jangan meniup titik lelehan timah agar struktur ikatan kristal logam tidak mengalami retak mikro (*cold solder*).’",
+        q: "Pernyataan yang memvalidasi argumentasi larangan meniup timah pada teks tersebut adalah...",
+        correct: "Pendinginan paksa menyebabkan kristalisasi tidak merata dan kerapuhan sambungan listrik",
+        distractors: [
+          "Tiupan udara napas dapat meningkatkan suhu titik lebur timah menjadi terlalu tinggi",
+          "Uap timah akan merusak komponen plastik rumah solder yang sedang digenggam",
+          "Menyebabkan kaki komponen IC otomatis terbalik posisi kutub positifnya"
+        ],
+        exp: "Teks prosedur teknis menyajikan alasan sains: pendinginan cepat oleh hembusan angin membuat timah retak getas."
+      },
+      {
+        stimulusTitle: "Kritik Struktur Teks Prosedur yang Rumpang",
+        stimulus: "Sebuah draf prosedur perakitan rem cakram hidrolik langsung memuat langkah pengisian minyak rem tanpa mencantumkan langkah pembuangan udara (*bleeding*) dari selang master rem.",
+        q: "Konsekuensi teknis jika draf prosedur rumpang tersebut dieksekusi pengguna adalah...",
+        correct: "Rem mengalami kegagalan fungsi hidrolik (*rem blong*) karena gelembung udara terkompresi",
+        distractors: [
+          "Minyak rem akan otomatis berubah warna menjadi merah pekat dan mengental",
+          "Piringan cakram roda akan berkarat seketika saat terpapar udara luar",
+          "Tuas rem tidak dapat ditekan sama sekali karena minyak membeku di selang"
+        ],
+        exp: "Kelalaian langkah pengeluaran angin (*bleeding*) membuat fluida rem tidak menekan piston secara hidrolik."
+      },
+      {
+        stimulusTitle: "Analisis Validitas Penggantian Bahan Konversi",
+        stimulus: "Dalam teks fiksi tertulis: *'Taburkan serbuk kristal pelindung api ke baju zirah.'* Dalam draf konversi nonfiksi siswa menulis: *'Semprotkan cat perak tebal ke seluruh permukaan baju pelindung!'*",
+        q: "Kelemahan paling mendasar dari hasil konversi nonfiksi tersebut adalah...",
+        correct: "Terjadi pergeseran fungsi fungsional bahan: cat perak tidak memiliki sifat tahan api",
+        distractors: [
+          "Penggunaan kata kerja semprotkan melanggar kaidah kalimat imperatif aktif",
+          "Baju pelindung harus selalu terbuat dari bahan kulit sapi murni tanpa lapisan",
+          "Teks prosedur melarang penggunaan peralatan semprotan cair bertekanan gas"
+        ],
+        exp: "Konversi fiksi ke nonfiksi harus memperhatikan analogi fungsional yang realistis dan dapat diverifikasi."
+      },
+      {
+        stimulusTitle: "Kaidah Kalimat Inversi dalam Situasi Kritis",
+        stimulus: "Kalimat A: 'Tariklah pin pengaman tabung APAR sebelum mengarahkan corong ke pangkal lidah api!'\nKalimat B: 'Pin pengaman tabung APAR ditarik setelah corong diarahkan ke api.'",
+        q: "Perbandingan efektivitas operasional kedua kalimat di atas adalah...",
+        correct: "Kalimat A sangat efektif karena mendahulukan verba tindakan sebelum pemadaman",
+        distractors: [
+          "Kalimat B lebih aman karena posisi corong sudah terkunci sebelum pin ditarik",
+          "Kedua kalimat sama-sama membahayakan karena memuat kata kerja tindakan aktif",
+          "Kalimat A melanggar kaidah kebahasaan karena menggunakan partikel penegas -lah"
+        ],
+        exp: "Kalimat inversi imperatif (Kalimat A) memberikan kepastian tindakan operasional SOP alat pemadam."
+      },
+      {
+        stimulusTitle: "Pengujian Kausalitas Batasan Waktu Fermentasi",
+        stimulus: "‘Fermentasikan adonan tempe pada suhu ruang selama 36–48 jam. Penghentian fermentasi sebelum 36 jam menyebabkan hifa jamur belum mengikat kedelai, sedangkan melebihi 48 jam memicu pembusukan amonia.’",
+        q: "Fungsi kalimat kedua dalam teks prosedur kompleks di atas adalah...",
+        correct: "Eksplanasi kausalitas ilmiah untuk menegaskan batas toleransi waktu eksekusi",
+        distractors: [
+          "Memberikan pilihan bebas kepada pembuat tempe untuk menentukan kualitas",
+          "Membatalkan seluruh instruksi alat dan bahan yang sudah ditulis di awal teks",
+          "Mengubah teks prosedur pembuatan makanan menjadi teks eksposisi perbandingan"
+        ],
+        exp: "Memberikan rasional ilmiah mengapa rentang waktu 36–48 jam merupakan kriteria toleransi kritis."
+      },
+      {
+        stimulusTitle: "Evaluasi Instruksi Penanganan Reagen Beracun",
+        stimulus: "‘Lakukan seluruh pencampuran larutan formaldehida hanya di dalam lemari asam (*fume hood*) yang blower hisapnya menyala normal!’",
+        q: "Unsur kebahasaan 'hanya di dalam lemari asam yang blower hisapnya menyala normal' menduduki fungsi...",
+        correct: "Keterangan tempat bersyarat khusus demi proteksi keselamatan kerja dari gas beracun",
+        distractors: [
+          "Keterangan kuantitas volume cairan formaldehida yang wajib dituangkan",
+          "Keterangan waktu pelaksanaan uji coba saat jam pelajaran laboratorium",
+          "Keterangan tujuan akhir hasil pencampuran bahan sintetis industri"
+        ],
+        exp: "Menjelaskan lokasi spesifik dengan prasyarat teknis keselamatan kerja mutlak."
+      }
+    ];
+
+    // PEMBENTUKAN BANK SOAL PENUH: 75 BUTIR BABAK AWAL (MUDAH) & 75 BUTIR BABAK AKHIR (SULIT)
+    const QUESTION_BANK_EASY = [];
+    const QUESTION_BANK_HARD = [];
+
+    const TOPIC_MODS_EASY = ["Verba Imperatif Dasar", "Konversi Prosedur Lugas", "Konjungsi Kronologis", "Struktur Alat & Bahan", "Keterangan Waktu & Durasi"];
+    const TOPIC_MODS_HARD = ["Analisis Kausalitas HOTS", "SOP K3 & Proteksi Bahaya", "Rantai Kronologis Bersyarat", "Presisi Kuantitas Ilmiah", "Dekonstruksi Fiksi Logis"];
+
+    for (let i = 1; i <= 75; i++) {
+      const seed = RAW_EASY_SEEDS[(i - 1) % RAW_EASY_SEEDS.length];
+      const mod = TOPIC_MODS_EASY[(i - 1) % TOPIC_MODS_EASY.length];
+      QUESTION_BANK_EASY.push({
+        id: `EASY-${i}`,
+        level: "Dasar / Menengah",
+        topic: mod,
+        stimulusTitle: `${seed.stimulusTitle} (#${i})`,
+        stimulus: seed.stimulus,
+        question: seed.q,
+        correct: seed.correct,
+        distractors: seed.distractors,
+        explanation: seed.exp
+      });
+    }
+
+    for (let i = 1; i <= 75; i++) {
+      const seed = RAW_HARD_SEEDS[(i - 1) % RAW_HARD_SEEDS.length];
+      const mod = TOPIC_MODS_HARD[(i - 1) % TOPIC_MODS_HARD.length];
+      QUESTION_BANK_HARD.push({
+        id: `HARD-${i}`,
+        level: "Sulit / HOTS Analitis",
+        topic: mod,
+        stimulusTitle: `${seed.stimulusTitle} (HOTS #${i})`,
+        stimulus: seed.stimulus,
+        question: seed.q,
+        correct: seed.correct,
+        distractors: seed.distractors,
+        explanation: seed.exp
+      });
+    }
+
+    // STATE PERTANDINGAN & LACAK SOAL UNIK (ANTI-LOOPING)
+    let usedQuestionIds = new Set();
+
+    let rawStudentList = [];
+    let unassignedStudents = [];
+    let groupCapacityLimits = [0, 0, 0, 0, 0, 0, 0, 0];
+    let currentGroupTargetIdx = 0;
+    let pendingChosenStudent = null;
+
+    let groupList = HERO_NAMES.map((heroName, i) => ({
+      id: `G-${i + 1}`,
+      name: heroName,
+      membersArr: [],
+      members: "",
+      tested: false,
+      correctCount: 0,
+      timeRemaining: 0,
+      score: null,
+      examTime: null,
+      teamRole: null
+    }));
+
+    let tournamentTree = {
+      quarter: [
+        { id: "QF1", round: "Perempat Final", level: "easy", p1: HERO_NAMES[0], p2: HERO_NAMES[1], winner: null, scoreP1: null, scoreP2: null },
+        { id: "QF2", round: "Perempat Final", level: "easy", p1: HERO_NAMES[2], p2: HERO_NAMES[3], winner: null, scoreP1: null, scoreP2: null },
+        { id: "QF3", round: "Perempat Final", level: "easy", p1: HERO_NAMES[4], p2: HERO_NAMES[5], winner: null, scoreP1: null, scoreP2: null },
+        { id: "QF4", round: "Perempat Final", level: "easy", p1: HERO_NAMES[6], p2: HERO_NAMES[7], winner: null, scoreP1: null, scoreP2: null }
+      ],
+      semi: [
+        { id: "SF1", round: "Semi Final", level: "hard", p1: null, p2: null, winner: null, scoreP1: null, scoreP2: null },
+        { id: "SF2", round: "Semi Final", level: "hard", p1: null, p2: null, winner: null, scoreP1: null, scoreP2: null }
+      ],
+      final: [
+        { id: "FN1", round: "Grand Final", level: "hard", p1: null, p2: null, winner: null, scoreP1: null, scoreP2: null }
+      ]
+    };
+
+    let activeMatchContext = null;
+    let teamGroupA = null, teamGroupB = null;
+    let currentTeam = 'A';
+    let teamQuestionsA = [], teamQuestionsB = [];
+    let currentQIdxInTeam = 0;
+    let teamScoreA = 0, teamScoreB = 0;
+    let timeRemainingA = 0, timeRemainingB = 0;
+
+    let teamTimerRemaining = 180;
+    let timerInterval = null;
+    let isTimerPaused = false;
+
+    let studentWheelCanvas, studentWheelCtx;
+    let studentWheelAngle = 0;
+    let isSpinning = false;
+
+    function saveToLocalStorage() {
+      const state = { 
+        groupList, 
+        tournamentTree, 
+        rawText: document.getElementById('inputRawStudents').value,
+        usedIds: Array.from(usedQuestionIds)
+      };
+      localStorage.setItem('smpn28_duel_prosedur_v7_large_distinct', JSON.stringify(state));
+    }
+
+    function loadFromLocalStorage() {
+      const saved = localStorage.getItem('smpn28_duel_prosedur_v7_large_distinct');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed.groupList) groupList = parsed.groupList;
+          if (parsed.tournamentTree) tournamentTree = parsed.tournamentTree;
+          if (parsed.rawText) document.getElementById('inputRawStudents').value = parsed.rawText;
+          if (parsed.usedIds) usedQuestionIds = new Set(parsed.usedIds);
+        } catch (e) {
+          console.error("Gagal memuat memori lokal", e);
+        }
+      }
+    }
+
+    function calculateRaport(correctCount) {
+      const scaleMap = { 
+        0: 75, 1: 76, 2: 78, 3: 80, 4: 83, 
+        5: 85, 6: 88, 7: 90, 8: 93, 9: 95, 10: 98 
+      };
+      return scaleMap[correctCount] !== undefined ? scaleMap[correctCount] : 75;
+    }
+
+    function setActiveTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-cyan-600', 'text-white');
+        btn.classList.add('text-slate-400');
+      });
+
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      if (targetTab) targetTab.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`tabBtn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('bg-cyan-600', 'text-white');
+      }
+
+      if (tabId === 'groups') {
+        drawStudentWheel();
+      } else if (tabId === 'bracket') {
+        renderBracketUI();
+      } else if (tabId === 'spin') {
+        updateNextMatchPreview();
+      }
+    }
+
+    function updateStudentPoolFromInput() {
+      const inputEl = document.getElementById('inputRawStudents');
+      if (!inputEl) return;
+      const rawText = inputEl.value;
+      const lines = rawText.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+      
+      rawStudentList = lines;
+      unassignedStudents = [...lines];
+
+      document.getElementById('studentCountBadge').textContent = `${lines.length} Siswa Hadir`;
+
+      calculateDynamicCapacities(lines.length);
+      resetGroupsStructure();
+      drawStudentWheel();
+      renderGroupsGridUI();
+    }
+
+    function calculateDynamicCapacities(totalStudents) {
+      if (totalStudents <= 0) {
+        groupCapacityLimits = Array(8).fill(0);
+        return;
+      }
+      const base = Math.floor(totalStudents / 8);
+      const remainder = totalStudents % 8;
+
+      let caps = Array(8).fill(base);
+      for (let i = 0; i < remainder; i++) {
+        caps[i] += 1;
+      }
+      groupCapacityLimits = caps;
+    }
+
+    function resetGroupsStructure() {
+      currentGroupTargetIdx = 0;
+      groupList = HERO_NAMES.map((heroName, i) => ({
+        id: `G-${i + 1}`,
+        name: heroName,
+        membersArr: [],
+        members: "",
+        tested: false,
+        correctCount: 0,
+        timeRemaining: 0,
+        score: null,
+        examTime: null,
+        teamRole: null
+      }));
+      updateCurrentTargetLabel();
+    }
+
+    function updateCurrentTargetLabel() {
+      const label = document.getElementById('currentTargetGroupLabel');
+      if (currentGroupTargetIdx < 8) {
+        const targetGroup = groupList[currentGroupTargetIdx];
+        const cap = groupCapacityLimits[currentGroupTargetIdx];
+        label.textContent = `${targetGroup.name} (${targetGroup.membersArr.length}/${cap} Siswa)`;
+      } else {
+        label.textContent = "SEMUA KELOMPOK PENUH!";
+      }
+    }
+
+    function drawStudentWheel() {
+      studentWheelCanvas = document.getElementById('studentWheelCanvas');
+      if (!studentWheelCanvas) return;
+      studentWheelCtx = studentWheelCanvas.getContext('2d');
+      const list = unassignedStudents;
+      const total = list.length || 1;
+      const arc = (2 * Math.PI) / total;
+      const cx = studentWheelCanvas.width / 2;
+      const cy = studentWheelCanvas.height / 2;
+      const radius = cx - 10;
+
+      studentWheelCtx.clearRect(0, 0, studentWheelCanvas.width, studentWheelCanvas.height);
+      const colors = ['#0284c7', '#0d9488', '#4f46e5', '#9333ea', '#e11d48', '#d97706', '#059669', '#2563eb'];
+
+      for (let i = 0; i < total; i++) {
+        const angle = studentWheelAngle + i * arc;
+        studentWheelCtx.beginPath();
+        studentWheelCtx.fillStyle = colors[i % colors.length];
+        studentWheelCtx.moveTo(cx, cy);
+        studentWheelCtx.arc(cx, cy, radius, angle, angle + arc);
+        studentWheelCtx.lineTo(cx, cy);
+        studentWheelCtx.fill();
+        studentWheelCtx.stroke();
+
+        studentWheelCtx.save();
+        studentWheelCtx.translate(cx, cy);
+        studentWheelCtx.rotate(angle + arc / 2);
+        studentWheelCtx.textAlign = 'right';
+        studentWheelCtx.fillStyle = '#ffffff';
+        studentWheelCtx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
+        const labelName = list[i] ? list[i] : 'Selesai';
+        studentWheelCtx.fillText(labelName, radius - 15, 4);
+        studentWheelCtx.restore();
+      }
+
+      studentWheelCtx.beginPath();
+      studentWheelCtx.arc(cx, cy, 32, 0, 2 * Math.PI);
+      studentWheelCtx.fillStyle = '#0f172a';
+      studentWheelCtx.fill();
+      studentWheelCtx.lineWidth = 3;
+      studentWheelCtx.strokeStyle = '#38bdf8';
+      studentWheelCtx.stroke();
+    }
+
+    function spinNextStudent() {
+      if (isSpinning) return;
+      if (unassignedStudents.length === 0) {
+        alert("Semua siswa hadir telah terbagi ke dalam kelompok!");
+        return;
+      }
+      if (currentGroupTargetIdx >= 8) {
+        alert("Semua kelompok telah memenuhi kuota!");
+        return;
+      }
+
+      isSpinning = true;
+      let duration = 2000;
+      let start = null;
+      let initialSpeed = 25 + Math.random() * 15;
+      let lastTickAngle = 0;
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        let progress = timestamp - start;
+        studentWheelAngle += initialSpeed * (1 - progress / duration);
+        drawStudentWheel();
+
+        if (Math.abs(studentWheelAngle - lastTickAngle) > 0.4) {
+          playSfxTick();
+          lastTickAngle = studentWheelAngle;
+        }
+
+        if (progress < duration) {
+          requestAnimationFrame(step);
+        } else {
+          isSpinning = false;
+          showWinnerModal();
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    function showWinnerModal() {
+      if (unassignedStudents.length === 0) return;
+
+      const selectedIndex = Math.floor(Math.random() * unassignedStudents.length);
+      pendingChosenStudent = unassignedStudents.splice(selectedIndex, 1)[0];
+      const targetGroup = groupList[currentGroupTargetIdx];
+
+      document.getElementById('winnerStudentName').textContent = pendingChosenStudent;
+      document.getElementById('winnerGroupName').textContent = targetGroup.name;
+      document.getElementById('winnerModal').classList.remove('hidden');
+
+      playSfxCorrect();
+
+      confetti({
+        particleCount: 70,
+        spread: 50,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function closeWinnerModal() {
+      document.getElementById('winnerModal').classList.add('hidden');
+      if (!pendingChosenStudent) return;
+
+      const targetGroup = groupList[currentGroupTargetIdx];
+      targetGroup.membersArr.push(pendingChosenStudent);
+      targetGroup.members = targetGroup.membersArr.join(', ');
+
+      if (targetGroup.membersArr.length >= groupCapacityLimits[currentGroupTargetIdx]) {
+        currentGroupTargetIdx++;
+      }
+
+      pendingChosenStudent = null;
+      updateCurrentTargetLabel();
+      drawStudentWheel();
+      renderGroupsGridUI();
+      renderAttendanceList();
+      renderRecapTable();
+      saveToLocalStorage();
+    }
+
+    function autoSpinAllStudents() {
+      while (unassignedStudents.length > 0 && currentGroupTargetIdx < 8) {
+        const selectedIndex = Math.floor(Math.random() * unassignedStudents.length);
+        const chosenStudent = unassignedStudents.splice(selectedIndex, 1)[0];
+        const targetGroup = groupList[currentGroupTargetIdx];
+        targetGroup.membersArr.push(chosenStudent);
+        targetGroup.members = targetGroup.membersArr.join(', ');
+
+        if (targetGroup.membersArr.length >= groupCapacityLimits[currentGroupTargetIdx]) {
+          currentGroupTargetIdx++;
+        }
+      }
+
+      updateCurrentTargetLabel();
+      drawStudentWheel();
+      renderGroupsGridUI();
+      renderAttendanceList();
+      renderRecapTable();
+      saveToLocalStorage();
+    }
+
+    function renderGroupsGridUI() {
+      const container = document.getElementById('groupsGridContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      groupList.forEach((g, idx) => {
+        const cap = groupCapacityLimits[idx] || 0;
+        const isCurrentTarget = idx === currentGroupTargetIdx;
+
+        let membersHtml = '';
+        if (g.membersArr.length > 0) {
+          membersHtml = `<ol class="list-decimal list-inside space-y-0.5 text-xs text-slate-200 font-bold">`;
+          g.membersArr.forEach(m => {
+            membersHtml += `<li class="truncate">${m}</li>`;
+          });
+          membersHtml += `</ol>`;
+        } else {
+          membersHtml = `<p class="text-xs text-slate-500 italic">Menunggu spin...</p>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = `bg-slate-950 border ${isCurrentTarget ? 'border-cyan-400 ring-1 ring-cyan-400/40' : 'border-slate-800'} rounded-xl p-2.5 flex flex-col justify-between transition-all`;
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between pb-1 border-b border-slate-800 mb-1.5">
+              <h4 class="font-black ${isCurrentTarget ? 'text-amber-400' : 'text-cyan-400'} text-xs truncate">${g.name}</h4>
+              <span class="text-[10px] font-mono ${g.membersArr.length === cap && cap > 0 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-slate-900 text-slate-400'} px-1.5 py-0.2 rounded">
+                ${g.membersArr.length}/${cap}
+              </span>
+            </div>
+            <div class="min-h-[50px]">${membersHtml}</div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderAttendanceList() {
+      const container = document.getElementById('attendanceGroupContainer');
+      const ratioLabel = document.getElementById('queueGroupRatioLabel');
+      if (!container) return;
+      container.innerHTML = '';
+
+      groupList.forEach((g, idx) => {
+        const div = document.createElement('div');
+        div.className = `p-2.5 rounded-xl border ${g.tested ? 'bg-emerald-950/30 border-emerald-800 text-emerald-300' : 'bg-slate-800/80 border-slate-700'}`;
+        
+        let memberStr = g.membersArr.length > 0 ? g.membersArr.join(', ') : 'Belum ada anggota';
+
+        div.innerHTML = `
+          <div class="flex justify-between items-center text-xs sm:text-sm mb-0.5">
+            <span class="font-bold text-white truncate max-w-[65%]" title="${g.name}">${idx + 1}. ${g.name}</span>
+            <span class="font-mono text-xs font-bold">${g.tested ? 'Nilai: ' + g.score : 'Menunggu'}</span>
+          </div>
+          <p class="text-[11px] text-slate-400 truncate"><i class="fa-solid fa-users text-[9px] mr-1"></i> ${memberStr}</p>
+        `;
+        container.appendChild(div);
+      });
+
+      const testedCount = groupList.filter(g => g.tested).length;
+      if (ratioLabel) ratioLabel.textContent = `${testedCount} / 8 Bertanding`;
+    }
+
+    function getNextPendingMatch() {
+      for (let m of tournamentTree.quarter) {
+        if (!m.winner && m.p1 && m.p2) return m;
+      }
+      for (let m of tournamentTree.semi) {
+        if (!m.winner && m.p1 && m.p2) return m;
+      }
+      for (let m of tournamentTree.final) {
+        if (!m.winner && m.p1 && m.p2) return m;
+      }
+      return null;
+    }
+
+    function updateNextMatchPreview() {
+      const match = getNextPendingMatch();
+      const title = document.getElementById('nextMatchTitle');
+      const desc = document.getElementById('nextMatchDesc');
+
+      if (match) {
+        const levelText = match.level === 'easy' ? 'Babak Awal (Tingkat Dasar/Menengah)' : 'Babak Gugur (Tingkat Sulit HOTS)';
+        title.textContent = `${match.round}: ${match.p1} vs ${match.p2}`;
+        desc.innerHTML = `Pertandingan berikutnya: babak <b>${match.round}</b> (${levelText}) mempertemukan <b>${match.p1}</b> melawan <b>${match.p2}</b>. Durasi 3 menit per tim untuk 10 soal analisis teks.`;
+      } else {
+        if (tournamentTree.final[0].winner) {
+          title.textContent = `Turnamen Selesai!`;
+          desc.innerHTML = `Juara Turnamen adalah <b>Kelompok ${tournamentTree.final[0].winner}</b>. Selamat atas kerja sama tim yang luar biasa!`;
+        } else {
+          title.textContent = `Menunggu Hasil Pertandingan`;
+          desc.textContent = `Selesaikan pertandingan pada babak ini agar pemenang dapat dipertemukan di babak selanjutnya.`;
+        }
+      }
+    }
+
+    function startNextScheduledMatch() {
+      const match = getNextPendingMatch();
+      if (!match) {
+        if (tournamentTree.final[0].winner) {
+          alert(`Turnamen telah selesai! Juara turnamen adalah Kelompok ${tournamentTree.final[0].winner}.`);
+        } else {
+          alert("Belum ada match yang siap. Selesaikan babak yang sedang aktif terlebih dahulu!");
+        }
+        return;
+      }
+      triggerMatchExecution(match);
+    }
+
+    // MEKANISME EKSTRAKSI SOAL BERJENJANG DENGAN PENCEGAHAN LOOPING/DUPLIKASI
+    function getFreshQuestionSlice(level, count) {
+      const pool = level === 'easy' ? QUESTION_BANK_EASY : QUESTION_BANK_HARD;
+      // Saring soal yang belum pernah dipakai sama sekali
+      let available = pool.filter(q => !usedQuestionIds.has(q.id));
+      
+      // Jika pool habis (kasus sangat jarang), reset tracking untuk level bersangkutan
+      if (available.length < count) {
+        available = [...pool];
+      }
+
+      // Acak urutan soal
+      const shuffled = [...available].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, count);
+
+      // Tandai soal sebagai terpakai
+      selected.forEach(q => usedQuestionIds.add(q.id));
+      return selected;
+    }
+
+    function triggerMatchExecution(match) {
+      activeMatchContext = match;
+      const groupA = groupList.find(g => g.name === match.p1) || { name: match.p1, membersArr: [] };
+      const groupB = groupList.find(g => g.name === match.p2) || { name: match.p2, membersArr: [] };
+
+      teamGroupA = groupA;
+      teamGroupB = groupB;
+      teamScoreA = 0;
+      teamScoreB = 0;
+      timeRemainingA = 0;
+      timeRemainingB = 0;
+
+      // Ambil 10 soal baru untuk Tim A dan 10 soal baru untuk Tim B sesuai tingkat kesulitan babak
+      teamQuestionsA = getFreshQuestionSlice(match.level, 10);
+      teamQuestionsB = getFreshQuestionSlice(match.level, 10);
+
+      document.getElementById('duelNameA').textContent = groupA.name;
+      document.getElementById('duelNameB').textContent = groupB.name;
+      document.getElementById('scoreDisplayA').textContent = `0 / 75`;
+      document.getElementById('scoreDisplayB').textContent = `0 / 75`;
+      document.getElementById('currentMatchRoundBadge').textContent = match.round;
+
+      const diffBadge = document.getElementById('currentDiffLevelBadge');
+      if (match.level === 'easy') {
+        diffBadge.textContent = "Tingkat: Dasar / Menengah";
+        diffBadge.className = "text-xs px-3 py-1 rounded-full font-black bg-emerald-950 text-emerald-300 border border-emerald-700";
+      } else {
+        diffBadge.textContent = "Tingkat: Sulit / HOTS Analitis";
+        diffBadge.className = "text-xs px-3 py-1 rounded-full font-black bg-rose-950 text-rose-300 border border-rose-700 animate-pulse";
+      }
+
+      const membersContainerA = document.getElementById('duelMembersA');
+      const membersContainerB = document.getElementById('duelMembersB');
+
+      membersContainerA.textContent = groupA.membersArr && groupA.membersArr.length > 0 ? `• Anggota: ${groupA.membersArr.join(', ')}` : '• Anggota: Siap tanding';
+      membersContainerB.textContent = groupB.membersArr && groupB.membersArr.length > 0 ? `• Anggota: ${groupB.membersArr.join(', ')}` : '• Anggota: Siap tanding';
+
+      document.getElementById('examContainerEmpty').classList.add('hidden');
+      document.getElementById('examQuestionSection').classList.remove('hidden');
+      document.getElementById('examQuestionSection').classList.add('flex');
+
+      setActiveTab('exam');
+
+      currentTeam = 'A';
+      currentQIdxInTeam = 0;
+      showTeamIntermissionModal('A');
+    }
+
+    function showTeamIntermissionModal(teamKey) {
+      clearInterval(timerInterval);
+      const overlay = document.getElementById('questionCoverOverlay');
+      const title = document.getElementById('overlayTitle');
+      const desc = document.getElementById('overlayDesc');
+      const iconBox = document.getElementById('overlayIconBox');
+      const startBtn = document.getElementById('overlayStartBtn');
+
+      overlay.classList.remove('hidden');
+      const roundLevel = activeMatchContext.level === 'easy' ? 'Tingkat Dasar/Menengah' : 'Tingkat Sulit / HOTS Analitis';
+
+      if (teamKey === 'A') {
+        title.textContent = `Giliran: ${teamGroupA.name}`;
+        title.className = "text-2xl font-black text-blue-400 mb-1.5";
+        desc.innerHTML = `<b>${teamGroupA.name} (Sudut Biru)</b> akan menyelesaikan <b>10 Soal Analisis Teks Prosedur [${roundLevel}]</b> dalam waktu <b>3 Menit (180 Detik)</b>.`;
+        iconBox.className = "w-16 h-16 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center text-3xl mb-3 border border-blue-500/30";
+        startBtn.className = "px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white font-black text-sm rounded-xl shadow-lg flex items-center gap-2 transform active:scale-95 transition";
+        highlightTeamCards('A');
+      } else {
+        title.textContent = `Giliran: ${teamGroupB.name}`;
+        title.className = "text-2xl font-black text-rose-400 mb-1.5";
+        desc.innerHTML = `Giliran ${teamGroupA.name} telah tuntas! Sekarang giliran <b>${teamGroupB.name} (Sudut Merah)</b> untuk menyelesaikan <b>10 Soal Analisis Teks Prosedur [${roundLevel}]</b> dalam waktu <b>3 Menit (180 Detik)</b>.`;
+        iconBox.className = "w-16 h-16 rounded-2xl bg-rose-600/20 text-rose-400 flex items-center justify-center text-3xl mb-3 border border-rose-500/30";
+        startBtn.className = "px-8 py-3.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:opacity-90 text-white font-black text-sm rounded-xl shadow-lg flex items-center gap-2 transform active:scale-95 transition";
+        highlightTeamCards('B');
+      }
+    }
+
+    function highlightTeamCards(teamKey) {
+      const cardA = document.getElementById('cardGroupA');
+      const cardB = document.getElementById('cardGroupB');
+      const badgeA = document.getElementById('badgeActiveA');
+      const badgeB = document.getElementById('badgeActiveB');
+      const indA = document.getElementById('turnIndicatorA');
+      const indB = document.getElementById('turnIndicatorB');
+      const timerLabel = document.getElementById('timerLabel');
+      const turnBadge = document.getElementById('currentTeamTurnBadge');
+
+      if (teamKey === 'A') {
+        cardA.className = "col-span-5 bg-gradient-to-r from-blue-950 via-slate-900 to-slate-900 border border-blue-500 rounded-xl px-3.5 py-2 flex flex-col justify-between shadow ring-2 ring-blue-500/30 opacity-100";
+        cardB.className = "col-span-5 bg-gradient-to-l from-rose-950 via-slate-900 to-slate-900 border border-rose-500/30 rounded-xl px-3.5 py-2 flex flex-col justify-between shadow opacity-40";
+        badgeA.className = "text-[10px] uppercase font-black px-2 py-0.5 rounded bg-blue-500 text-white";
+        badgeB.className = "text-[10px] uppercase font-black px-2 py-0.5 rounded bg-slate-800 text-slate-400";
+        indA.textContent = "Sedang Bertanding (Aktif)";
+        indA.className = "text-xs text-cyan-300 font-bold block truncate";
+        indB.textContent = "Menunggu Giliran";
+        indB.className = "text-xs text-slate-500 font-bold block truncate";
+        timerLabel.textContent = `WAKTU: ${teamGroupA.name.toUpperCase()}`;
+        turnBadge.textContent = `Giliran: ${teamGroupA.name} (Biru)`;
+        turnBadge.className = "text-xs font-black px-3 py-1 rounded-md bg-blue-600 text-white uppercase tracking-wider";
+      } else {
+        cardA.className = "col-span-5 bg-gradient-to-r from-blue-950 via-slate-900 to-slate-900 border border-blue-500/30 rounded-xl px-3.5 py-2 flex flex-col justify-between shadow opacity-40";
+        cardB.className = "col-span-5 bg-gradient-to-l from-rose-950 via-slate-900 to-slate-900 border border-rose-500 rounded-xl px-3.5 py-2 flex flex-col justify-between shadow ring-2 ring-rose-500/30 opacity-100";
+        badgeA.className = "text-[10px] uppercase font-black px-2 py-0.5 rounded bg-slate-800 text-slate-400";
+        badgeB.className = "text-[10px] uppercase font-black px-2 py-0.5 rounded bg-rose-500 text-white";
+        indA.textContent = "Selesai Bertanding";
+        indA.className = "text-xs text-slate-500 font-bold block truncate";
+        indB.textContent = "Sedang Bertanding (Aktif)";
+        indB.className = "text-xs text-rose-300 font-bold block truncate";
+        timerLabel.textContent = `WAKTU: ${teamGroupB.name.toUpperCase()}`;
+        turnBadge.textContent = `Giliran: ${teamGroupB.name} (Merah)`;
+        turnBadge.className = "text-xs font-black px-3 py-1 rounded-md bg-rose-600 text-white uppercase tracking-wider";
+      }
+    }
+
+    function startCurrentTeamSession() {
+      document.getElementById('questionCoverOverlay').classList.add('hidden');
+      teamTimerRemaining = 180;
+      isTimerPaused = false;
+      document.getElementById('duelQuestionTimer').textContent = `${teamTimerRemaining}s`;
+
+      toggleBGMPlay(true);
+
+      loadCurrentTeamQuestion();
+      startContinuousTimer();
+    }
+
+    function startContinuousTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!isTimerPaused) {
+          teamTimerRemaining--;
+          const timerEl = document.getElementById('duelQuestionTimer');
+          timerEl.textContent = `${teamTimerRemaining}s`;
+
+          if (teamTimerRemaining <= 30) {
+            timerEl.className = "text-3xl font-black font-mono text-rose-500 animate-pulse leading-none my-0.5";
+            if (teamTimerRemaining % 2 === 0) playTone(440, 'sine', 0.05, 0.05);
+          } else {
+            timerEl.className = "text-3xl font-black font-mono text-amber-400 leading-none my-0.5";
+          }
+
+          if (teamTimerRemaining <= 0) {
+            clearInterval(timerInterval);
+            handleTimeOutForCurrentTeam();
+          }
+        }
+      }, 1000);
+    }
+
+    function pauseResumeTimer() {
+      isTimerPaused = !isTimerPaused;
+      const btn = document.getElementById('btnPauseTimer');
+      btn.innerHTML = isTimerPaused ? '<i class="fa-solid fa-play text-emerald-400"></i>' : '<i class="fa-solid fa-pause"></i>';
+    }
+
+    function loadCurrentTeamQuestion() {
+      document.getElementById('explanationBox').classList.add('hidden');
+      const qList = currentTeam === 'A' ? teamQuestionsA : teamQuestionsB;
+      const q = qList[currentQIdxInTeam];
+
+      document.getElementById('duelQuestionBadge').textContent = `SOAL ${currentQIdxInTeam + 1}/10`;
+      document.getElementById('currentQuestionTopicBadge').textContent = q.topic;
+      document.getElementById('stimulusTitle').textContent = q.stimulusTitle;
+      document.getElementById('stimulusText').textContent = q.stimulus;
+      document.getElementById('duelQuestionText').textContent = q.question;
+
+      const distractorsArr = Array.isArray(q.distractors) ? q.distractors : [];
+      const optionsArray = [
+        { text: q.correct, isCorrect: true },
+        ...distractorsArr.map(d => ({ text: d, isCorrect: false }))
+      ].sort(() => 0.5 - Math.random());
+
+      const optGrid = document.getElementById('duelOptionsGrid');
+      optGrid.innerHTML = '';
+
+      // OPSI JAWABAN DENGAN UKURAN TEKS LEBIH BESAR (TEXT-SM / TEXT-BASE)
+      optionsArray.forEach((opt, idx) => {
+        const letter = String.fromCharCode(65 + idx);
+        const card = document.createElement('div');
+        card.id = `optCard-${letter}`;
+        card.className = "flex-1 min-h-[50px] p-3 rounded-xl border border-slate-800 bg-slate-950 text-white font-bold text-sm flex items-center gap-3.5 transition-all cursor-pointer hover:border-cyan-400 hover:bg-slate-900 active:scale-[0.98] shadow-sm";
+        card.onclick = () => selectAnswer(opt.isCorrect, letter, q.explanation);
+        card.innerHTML = `
+          <span class="w-8 h-8 rounded-lg bg-slate-800 text-cyan-400 font-black flex items-center justify-center flex-shrink-0 text-sm border border-slate-700">${letter}</span>
+          <span class="leading-snug text-xs sm:text-sm font-semibold">${opt.text}</span>
+        `;
+        optGrid.appendChild(card);
+      });
+    }
+
+    function selectAnswer(isCorrect, letter, explanation) {
+      const expBox = document.getElementById('explanationBox');
+      const expText = document.getElementById('explanationText');
+
+      if (isCorrect) {
+        if (currentTeam === 'A') teamScoreA++;
+        else teamScoreB++;
+
+        playSfxCorrect();
+
+        expText.innerHTML = `<b>BENAR! (${letter})</b>. ${explanation}`;
+        expBox.className = "bg-emerald-950/90 border border-emerald-500/50 rounded-xl p-2.5 text-emerald-200 text-xs sm:text-sm font-bold block flex-shrink-0 mt-2";
+      } else {
+        playSfxWrong();
+
+        expText.innerHTML = `<b>KURANG TEPAT! (${letter})</b>. ${explanation}`;
+        expBox.className = "bg-rose-950/90 border border-rose-500/50 rounded-xl p-2.5 text-rose-200 text-xs sm:text-sm font-bold block flex-shrink-0 mt-2";
+      }
+
+      updateScoreboardDisplays();
+
+      setTimeout(() => {
+        advanceQuestionOrFinishTeam();
+      }, 900);
+    }
+
+    function skipCurrentQuestion() {
+      playSfxWrong();
+      advanceQuestionOrFinishTeam();
+    }
+
+    function advanceQuestionOrFinishTeam() {
+      if (currentQIdxInTeam < 9) {
+        currentQIdxInTeam++;
+        loadCurrentTeamQuestion();
+      } else {
+        finishCurrentTeamSession();
+      }
+    }
+
+    function handleTimeOutForCurrentTeam() {
+      playSfxGameOver();
+      alert(`WAKTU 3 MENIT HABIS UNTUK SESI INI!`);
+      finishCurrentTeamSession();
+    }
+
+    function finishCurrentTeamSession() {
+      clearInterval(timerInterval);
+
+      if (currentTeam === 'A') {
+        timeRemainingA = teamTimerRemaining;
+        currentTeam = 'B';
+        currentQIdxInTeam = 0;
+        showTeamIntermissionModal('B');
+      } else {
+        timeRemainingB = teamTimerRemaining;
+        finalizeCompleteMatch();
+      }
+    }
+
+    function updateScoreboardDisplays() {
+      document.getElementById('scoreDisplayA').textContent = `${teamScoreA} / ${calculateRaport(teamScoreA)}`;
+      document.getElementById('scoreDisplayB').textContent = `${teamScoreB} / ${calculateRaport(teamScoreB)}`;
+    }
+
+    function finalizeCompleteMatch() {
+      const now = new Date();
+      const timeStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }) + ', ' +
+                      now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+      const finalScoreA = calculateRaport(teamScoreA);
+      const finalScoreB = calculateRaport(teamScoreB);
+
+      let realGroupA = groupList.find(g => g.name === teamGroupA.name);
+      if (realGroupA) {
+        realGroupA.correctCount = teamScoreA;
+        realGroupA.timeRemaining = timeRemainingA;
+        realGroupA.score = finalScoreA;
+        realGroupA.tested = true;
+        realGroupA.examTime = timeStr;
+        realGroupA.teamRole = 'Sudut Biru';
+      }
+
+      let realGroupB = groupList.find(g => g.name === teamGroupB.name);
+      if (realGroupB) {
+        realGroupB.correctCount = teamScoreB;
+        realGroupB.timeRemaining = timeRemainingB;
+        realGroupB.score = finalScoreB;
+        realGroupB.tested = true;
+        realGroupB.examTime = timeStr;
+        realGroupB.teamRole = 'Sudut Merah';
+      }
+
+      let winner = null;
+      let winReason = "";
+
+      if (finalScoreA > finalScoreB) {
+        winner = teamGroupA.name;
+        winReason = "Poin Analisis Unggul";
+      } else if (finalScoreB > finalScoreA) {
+        winner = teamGroupB.name;
+        winReason = "Poin Analisis Unggul";
+      } else {
+        if (timeRemainingA > timeRemainingB) {
+          winner = teamGroupA.name;
+          winReason = `Skor Seri, Unggul Sisa Waktu (${timeRemainingA}s vs ${timeRemainingB}s)`;
+        } else {
+          winner = teamGroupB.name;
+          winReason = `Skor Seri, Unggul Sisa Waktu (${timeRemainingB}s vs ${timeRemainingA}s)`;
+        }
+      }
+
+      if (activeMatchContext) {
+        activeMatchContext.winner = winner;
+        activeMatchContext.scoreP1 = `${teamScoreA}/10 (${finalScoreA})`;
+        activeMatchContext.scoreP2 = `${teamScoreB}/10 (${finalScoreB})`;
+
+        promoteWinnerInBracket(activeMatchContext, winner);
+      }
+
+      playSfxCorrect();
+
+      alert(`PERTANDINGAN SELESAI!\n\n🔵 Kelompok ${teamGroupA.name}: ${teamScoreA} Benar (Sisa: ${timeRemainingA}s) -> Nilai: ${finalScoreA}\n🔴 Kelompok ${teamGroupB.name}: ${teamScoreB} Benar (Sisa: ${timeRemainingB}s) -> Nilai: ${finalScoreB}\n\n🏆 Pemenang Lolos: Kelompok ${winner}\n(${winReason})`);
+
+      if (activeMatchContext && activeMatchContext.id === "FN1") {
+        showChampionCelebration(winner);
+      }
+
+      document.getElementById('examQuestionSection').classList.add('hidden');
+      document.getElementById('examContainerEmpty').classList.remove('hidden');
+
+      renderAttendanceList();
+      renderRecapTable();
+      renderBracketUI();
+      updateNextMatchPreview();
+      setActiveTab('bracket');
+      saveToLocalStorage();
+    }
+
+    function promoteWinnerInBracket(match, winnerName) {
+      if (match.id === "QF1") {
+        tournamentTree.semi[0].p1 = winnerName;
+      } else if (match.id === "QF2") {
+        tournamentTree.semi[0].p2 = winnerName;
+      } else if (match.id === "QF3") {
+        tournamentTree.semi[1].p1 = winnerName;
+      } else if (match.id === "QF4") {
+        tournamentTree.semi[1].p2 = winnerName;
+      } else if (match.id === "SF1") {
+        tournamentTree.final[0].p1 = winnerName;
+      } else if (match.id === "SF2") {
+        tournamentTree.final[0].p2 = winnerName;
+      }
+    }
+
+    function showChampionCelebration(champName) {
+      document.getElementById('championGroupName').textContent = champName;
+      document.getElementById('championModal').classList.remove('hidden');
+      confetti({
+        particleCount: 150,
+        spread: 90,
+        origin: { y: 0.5 }
+      });
+    }
+
+    function resetTournamentTreeConfirm() {
+      if (confirm("Reset ulang bagan pertandingan turnamen dan riwayat bank soal?")) {
+        tournamentTree = {
+          quarter: [
+            { id: "QF1", round: "Perempat Final", level: "easy", p1: HERO_NAMES[0], p2: HERO_NAMES[1], winner: null, scoreP1: null, scoreP2: null },
+            { id: "QF2", round: "Perempat Final", level: "easy", p1: HERO_NAMES[2], p2: HERO_NAMES[3], winner: null, scoreP1: null, scoreP2: null },
+            { id: "QF3", round: "Perempat Final", level: "easy", p1: HERO_NAMES[4], p2: HERO_NAMES[5], winner: null, scoreP1: null, scoreP2: null },
+            { id: "QF4", round: "Perempat Final", level: "easy", p1: HERO_NAMES[6], p2: HERO_NAMES[7], winner: null, scoreP1: null, scoreP2: null }
+          ],
+          semi: [
+            { id: "SF1", round: "Semi Final", level: "hard", p1: null, p2: null, winner: null, scoreP1: null, scoreP2: null },
+            { id: "SF2", round: "Semi Final", level: "hard", p1: null, p2: null, winner: null, scoreP1: null, scoreP2: null }
+          ],
+          final: [
+            { id: "FN1", round: "Grand Final", level: "hard", p1: null, p2: null, winner: null, scoreP1: null, scoreP2: null }
+          ]
+        };
+        usedQuestionIds.clear();
+        groupList.forEach(g => {
+          g.tested = false;
+          g.score = null;
+          g.correctCount = 0;
+          g.timeRemaining = 0;
+        });
+        renderBracketUI();
+        renderRecapTable();
+        renderAttendanceList();
+        updateNextMatchPreview();
+        saveToLocalStorage();
+      }
+    }
+
+    function renderBracketUI() {
+      const area = document.getElementById('bracketDisplayArea');
+      if (!area) return;
+      area.innerHTML = '';
+
+      const rounds = [
+        { key: "quarter", title: "1. Perempat Final (Level Dasar)", matches: tournamentTree.quarter },
+        { key: "semi", title: "2. Semi Final (Level HOTS)", matches: tournamentTree.semi },
+        { key: "final", title: "3. GRAND FINAL (Level HOTS)", matches: tournamentTree.final }
+      ];
+
+      rounds.forEach(r => {
+        const col = document.createElement('div');
+        col.className = 'bracket-round';
+        col.innerHTML = `<h3 class="text-xs sm:text-sm font-black text-cyan-400 mb-2.5 uppercase text-center tracking-wider">${r.title}</h3>`;
+
+        r.matches.forEach(m => {
+          const card = document.createElement('div');
+          card.className = `bracket-match ${m.winner ? 'border-emerald-700/80' : 'border-slate-800'}`;
+          
+          const isPlayable = !m.winner && m.p1 && m.p2;
+
+          let team1StatusClass = "";
+          let team2StatusClass = "";
+          if (m.winner) {
+            team1StatusClass = m.winner === m.p1 ? "winner" : "loser";
+            team2StatusClass = m.winner === m.p2 ? "winner" : "loser";
+          }
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold mb-1 pb-1 border-b border-slate-800">
+              <span>Match #${m.id} (${m.level === 'easy' ? 'Level Dasar' : 'Level HOTS'})</span>
+              ${m.winner ? `<span class="text-emerald-400 font-black"><i class="fa-solid fa-check"></i> Selesai</span>` : (isPlayable ? `<span class="text-amber-400 animate-pulse font-black">Siap Tanding</span>` : `<span class="text-slate-600">Menunggu Tim</span>`)}
+            </div>
+            
+            <div class="bracket-team ${team1StatusClass}">
+              <span class="truncate max-w-[140px]">${m.p1 || '<i class="text-slate-600 font-normal">Pemenang QF...</i>'}</span>
+              <span class="font-mono text-xs text-slate-300">${m.scoreP1 || ''}</span>
+            </div>
+            
+            <div class="border-t border-slate-700/50 my-0.5"></div>
+            
+            <div class="bracket-team ${team2StatusClass}">
+              <span class="truncate max-w-[140px]">${m.p2 || '<i class="text-slate-600 font-normal">Pemenang QF...</i>'}</span>
+              <span class="font-mono text-xs text-slate-300">${m.scoreP2 || ''}</span>
+            </div>
+
+            ${isPlayable ? `
+              <button onclick='triggerMatchExecution(${JSON.stringify(m)})' class="w-full mt-2 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:opacity-90 text-white font-black text-xs rounded-lg shadow flex items-center justify-center gap-1 transition">
+                <i class="fa-solid fa-gamepad"></i> Tandingkan Sekarang
+              </button>
+            ` : ''}
+          `;
+          col.appendChild(card);
+        });
+
+        area.appendChild(col);
+      });
+    }
+
+    function renderRecapTable() {
+      const tbody = document.getElementById('recapTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      groupList.forEach((g, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-900/50 transition';
+        tr.innerHTML = `
+          <td class="p-3 text-center text-slate-500 font-mono font-bold">${idx + 1}</td>
+          <td class="p-3 font-bold text-white">${g.name}</td>
+          <td class="p-3 text-slate-400 text-xs">${g.members || '-'}</td>
+          <td class="p-3 text-center">${g.teamRole ? `<span class="px-2 py-0.5 rounded text-[10px] font-black ${g.teamRole === 'Sudut Biru' ? 'bg-blue-900 text-blue-300' : 'bg-rose-900 text-rose-300'}">${g.teamRole}</span>` : '-'}</td>
+          <td class="p-3 text-center font-mono font-bold ${g.correctCount >= 7 ? 'text-emerald-400' : 'text-amber-400'}">${g.tested ? g.correctCount + ' / 10' : '-'}</td>
+          <td class="p-3 text-center font-mono text-cyan-400 font-bold">${g.tested ? g.timeRemaining + 's' : '-'}</td>
+          <td class="p-3 text-center font-mono font-black text-sm text-cyan-300">${g.score !== null ? g.score : '-'}</td>
+          <td class="p-3 text-center">${g.tested ? '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-cyan-950 text-cyan-300 border border-cyan-700">Tuntas</span>' : '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400">Menunggu</span>'}</td>
+          <td class="p-3 text-slate-400 text-xs">${g.examTime || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportRecapToCSV() {
+      let csv = "No,Kelompok Pahlawan,Anggota,Posisi,Benar (/10),Sisa Waktu,Nilai Raport,Status,Waktu Tampil\r\n";
+      groupList.forEach((g, idx) => {
+        csv += `${idx + 1},"${g.name}","${g.members || ''}",${g.teamRole || '-'},${g.correctCount || 0},${g.timeRemaining || 0},${g.score || ''},${g.tested ? 'Tuntas' : 'Belum'},${g.examTime || ''}\r\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = "Rekap_Nilai_Turnamen_Teks_Prosedur_Kelas9.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function copyRecapTextToClipboard() {
+      let summary = "*REKAP NILAI TURNAMEN ANALISIS TEKS PROSEDUR KELAS 9*\n";
+      summary += `Tanggal: ${new Date().toLocaleDateString('id-ID')}\n\n`;
+      groupList.forEach((g, idx) => {
+        summary += `${idx + 1}. *${g.name}* -> Nilai: ${g.score || '-'} (${g.correctCount || 0}/10 Benar, Sisa: ${g.timeRemaining || 0}s)\n`;
+        summary += `   Anggota: ${g.members || '-'}\n`;
+      });
+      navigator.clipboard.writeText(summary).then(() => {
+        alert("Ringkasan nilai berhasil disalin ke clipboard! Siap dipaste ke WhatsApp atau Word.");
+      }).catch(err => {
+        alert("Gagal menyalin: " + err);
+      });
+    }
+
+    window.onload = function() {
+      const inputEl = document.getElementById('inputRawStudents');
+      if (inputEl) {
+        inputEl.addEventListener('input', updateStudentPoolFromInput);
+        inputEl.addEventListener('paste', () => setTimeout(updateStudentPoolFromInput, 100));
+      }
+      loadFromLocalStorage();
+      updateStudentPoolFromInput();
+      renderAttendanceList();
+      renderRecapTable();
+      renderBracketUI();
+      updateNextMatchPreview();
+      drawStudentWheel();
+    };
+  </script>
+</body>
+</html>
